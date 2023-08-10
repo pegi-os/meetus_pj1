@@ -357,7 +357,7 @@ function makeConnection() {
     const remoteDataChannel = event.channel;
 
     console.log("Received an incoming data channel from the remote peer:", remoteDataChannel.label);
-
+    myDataChannel = myPeerConnection.createDataChannel("chat");
     // Set up event listeners for the incoming data channel
     remoteDataChannel.addEventListener("open", () => {
       console.log("Remote data channel is open and ready to send/receive data");
@@ -371,7 +371,7 @@ function makeConnection() {
 
   myPeerConnection.addEventListener("icecandidate", handleIce);
   myPeerConnection.addEventListener("track", handleAddTrack);
-  myDataChannel = myPeerConnection.createDataChannel("chat");
+  
 }
 
 // --------- Data Channel Code ---------
