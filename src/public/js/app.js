@@ -267,8 +267,12 @@ waitRoomForm.addEventListener("submit", handleRoomSubmit);
 
 socket.on("welcome", async () => {
   myDataChannel = myPeerConnection.createDataChannel("chat");
-  console.log(myDataChannel);
   myDataChannel.addEventListener("message", addMessage);
+
+  myDataChannel.addEventListener("open", () => {
+    console.log("Data channel is open and ready to send/receive data");
+  });
+  
 
   const offer = await myPeerConnection.createOffer();
   myPeerConnection.setLocalDescription(offer);
@@ -276,9 +280,9 @@ socket.on("welcome", async () => {
 });
 
 socket.on("receive_offer", async (offer) => {
-  console.log(myDataChannel);
   myPeerConnection.addEventListener("datachannel", (e) => {
     myDataChannel = e.channel;
+    console.log(myDataChannel);
     myDataChannel.addEventListener("message", addMessage);
   });
   myPeerConnection.setRemoteDescription(offer);
@@ -353,21 +357,6 @@ function makeConnection() {
 
   myPeerConnection = new RTCPeerConnection(configuration);
 
-  myPeerConnection.ondatachannel = (event) => {
-    const remoteDataChannel = event.channel;
-
-    console.log("Received an incoming data channel from the remote peer:", remoteDataChannel.label);
-    myDataChannel = myPeerConnection.createDataChannel("chat");
-    // Set up event listeners for the incoming data channel
-    remoteDataChannel.addEventListener("open", () => {
-      console.log("Remote data channel is open and ready to send/receive data");
-      remoteDataChannel.send("Hello from the local peer!");
-    });
-
-    remoteDataChannel.addEventListener("message", (event) => {
-      console.log("Received message from remote peer:", event.data);
-    });
-  };
 
   myPeerConnection.addEventListener("icecandidate", handleIce);
   myPeerConnection.addEventListener("track", handleAddTrack);
