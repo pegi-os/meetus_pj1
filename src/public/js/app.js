@@ -299,7 +299,6 @@ socket.on("receive_media", async (offerDataString) => {
     myDataChannel = e.channel;
     myDataChannel.addEventListener("message", addMessage);
   });
-  myPeerConnection.setRemoteDescription(offer);
 
   const offerData = JSON.parse(offerDataString);
   const offer = offerData.offer;
