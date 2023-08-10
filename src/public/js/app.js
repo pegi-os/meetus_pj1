@@ -349,13 +349,7 @@ function makeConnection() {
     {
       urls: [
         'stun:stun.l.google.com:19302', // Google STUN server
-        'stun:stun.services.mozilla.com' // Mozilla STUN server
       ]
-    },
-    {
-      urls: 'turn:openrelay.metered.ca:80',
-      username: 'openrelayproject',
-      credential: 'openrelayproject'
     }
   ];
 
