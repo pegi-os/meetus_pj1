@@ -1,0 +1,44 @@
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(http-equiv="X-UA-Compatible", content="IE=edge")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title Meetus
+        link(rel="stylesheet", href="https://unpkg.com/mvp.css")
+        link(rel='stylesheet', href="/public/home.css")
+    body
+        header
+            h1 Meetus
+        main
+            div#waitRoom
+                form
+                    p 
+                        | Start video call & messaging
+                        br
+                        | by entering a chat room
+                    input(id="nickname", placeholder="nickname", required, type="text")
+                    input(id="roomName", placeholder="room name", required, type="text")
+                    button Enter Room
+            div#callRoom
+                div#videoCall
+                    div#screenStream
+                        h2 You:
+                        video#myScreen(autoplay, playinline, width="400", height="400")
+                        video#myVideo(autoplay, playinline, width = "400", height = "400")
+                        button#screen Turn Screen on
+                        button#audio Mute
+                        button#video Turn Video on
+                        select#cameraSelect 
+                    div#peerStream
+                        h2 Opponent:
+                        video#peerScreen(autoplay, playinline, width="400", height="400")
+                        video#peerVideo(autoplay, playinline, width = "400", height = "400")
+                div#chatContainer
+                    h2 Chat 💬
+                    ul#messages 
+                    form#chat
+                        input(type="text", placeholder="Type a message")
+                        button Send
+        script(src="/socket.io/socket.io.js") 
+        script(src="/public/js/app.js") 
