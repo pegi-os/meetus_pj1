@@ -331,17 +331,22 @@ function handleAddTrack(event) {
 
 
 
-
-
-
 function makeConnection() {
+  // Define STUN and TURN server configurations
+  const iceServers = [
+    {
+      urls: 'turn:openrelay.metered.ca:80',
+      username: 'openrelayproject',
+      credential: 'openrelayproject'
+    }
+  ];
 
-  myPeerConnection = new RTCPeerConnection();
+  const configuration = { iceServers };
+
+  myPeerConnection = new RTCPeerConnection(configuration);
+
   myPeerConnection.addEventListener("icecandidate", handleIce);
-
   myPeerConnection.addEventListener("track", handleAddTrack);
-
-
 }
 
 // --------- Data Channel Code ---------
