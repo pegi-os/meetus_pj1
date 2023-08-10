@@ -267,6 +267,7 @@ waitRoomForm.addEventListener("submit", handleRoomSubmit);
 
 socket.on("welcome", async () => {
   myDataChannel = myPeerConnection.createDataChannel("chat");
+  console.log(myDataChannel); 
   myDataChannel.addEventListener("message", addMessage);
 
   const offer = await myPeerConnection.createOffer();
@@ -275,6 +276,7 @@ socket.on("welcome", async () => {
 });
 
 socket.on("receive_offer", async (offer) => {
+  console.log(myDataChannel);
   myPeerConnection.addEventListener("datachannel", (e) => {
     myDataChannel = e.channel;
     myDataChannel.addEventListener("message", addMessage);
@@ -292,6 +294,13 @@ socket.on("receive_answer", (answer) => {
 });
 
 socket.on("receive_media", async (offerDataString) => {
+  console.log(myDataChannel);
+  myPeerConnection.addEventListener("datachannel", (e) => {
+    myDataChannel = e.channel;
+    myDataChannel.addEventListener("message", addMessage);
+  });
+  myPeerConnection.setRemoteDescription(offer);
+
   const offerData = JSON.parse(offerDataString);
   const offer = offerData.offer;
   const receivedTrackEvent = offerData.trackevent;
@@ -347,6 +356,7 @@ function makeConnection() {
 
   myPeerConnection.addEventListener("icecandidate", handleIce);
   myPeerConnection.addEventListener("track", handleAddTrack);
+  myDataChannel = myPeerConnection.createDataChannel("chat");
 }
 
 // --------- Data Channel Code ---------
