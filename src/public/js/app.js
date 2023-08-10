@@ -347,6 +347,12 @@ function makeConnection() {
   // Define STUN and TURN server configurations
   const iceServers = [
     {
+      urls: [
+        'stun:stun.l.google.com:19302', // Google STUN server
+        'stun:stun.services.mozilla.com' // Mozilla STUN server
+      ]
+    },
+    {
       urls: 'turn:openrelay.metered.ca:80',
       username: 'openrelayproject',
       credential: 'openrelayproject'
@@ -357,10 +363,8 @@ function makeConnection() {
 
   myPeerConnection = new RTCPeerConnection(configuration);
 
-
   myPeerConnection.addEventListener("icecandidate", handleIce);
   myPeerConnection.addEventListener("track", handleAddTrack);
-  
 }
 
 // --------- Data Channel Code ---------
