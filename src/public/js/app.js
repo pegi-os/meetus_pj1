@@ -315,7 +315,6 @@ socket.on("receive_media", async (offerDataString) => {
   const offerData = JSON.parse(offerDataString);
   const offer = offerData.offer;
   trackevent = offerData.trackevent;
-  trackevent = receivedTrackEvent;
 
   myPeerConnection.setRemoteDescription(offer);
   // getMedia
