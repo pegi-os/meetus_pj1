@@ -1,5 +1,6 @@
 const socket = io();
 
+//getElement
 const myScreen = document.getElementById("myScreen");
 const myVideo = document.getElementById("myVideo");
 const cameraSelect = document.getElementById("cameraSelect");
@@ -12,9 +13,11 @@ const waitRoom = document.getElementById("waitRoom");
 const waitRoomForm = waitRoom.querySelector("form");
 const callRoom = document.getElementById("callRoom");
 
-// callRoom.hidden = true;
+
+//callRoom is not shown until the user goes into the room
 callRoom.style.display = "none";
 
+//variables that is used through out my frontend
 let videoStream;
 let screenStream;
 let muted = false;
@@ -26,15 +29,19 @@ let myPeerConnection;
 let myDataChannel;
 let trackevent;
 
+// ------------------------function for when the user enterd the room----------------------------
+//function for sharing video
 async function getVideo() {
-
   try {
     videoStream = await navigator.mediaDevices.getUserMedia({
       audio: true,
-      video: true
+      video: {
+        width: 640,
+        height: 480
+      }
     });
+    trackevent = 2; // letting the backend know that the user opened up camera(video) sharing
     myVideo.srcObject = videoStream;
-    trackevent = 2;
     myPeerConnection.addTrack(videoStream.getVideoTracks()[0], videoStream);
     const offer = await myPeerConnection.createOffer();
     await myPeerConnection.setLocalDescription(offer);
@@ -42,7 +49,7 @@ async function getVideo() {
       offer,
       trackevent
     };
-    const offerDataString = JSON.stringify(offerData);
+    const offerDataString = JSON.stringify(offerData); // when sending data to the backend, it needs to be in string
     socket.emit("send_media", offerDataString, roomName)
     await getCamera();
   } catch (e) {
@@ -50,6 +57,35 @@ async function getVideo() {
   }
 }
 
+//function for sharng screen
+async function getScreen() {
+  try {
+    screenStream = await navigator.mediaDevices.getDisplayMedia({
+      audio: true,
+      video: {
+        width: 640,
+        height: 480
+      }
+    });
+    trackevent = 1; // letthing the backend know that the user opened up screen sharing
+    myScreen.srcObject = screenStream;
+    myPeerConnection.addTrack(screenStream.getVideoTracks()[0], screenStream);
+
+    const offer = await myPeerConnection.createOffer();
+    await myPeerConnection.setLocalDescription(offer);
+    const offerData = {
+      offer,
+      trackevent
+    };
+    const offerDataString = JSON.stringify(offerData);
+    socket.emit("send_media", offerDataString, roomName);
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+//function for allowing the user to change camera in their device.
+//For example back camera or front camera
 async function getCamera() {
   try {
     const devices = await navigator.mediaDevices.enumerateDevices();
@@ -66,6 +102,7 @@ async function getCamera() {
   }
 }
 
+//function for when the user clicked the mute button, the web will process so that the user's voice will be muted or not.
 function handleAudioClick() {
   videoStream
     .getAudioTracks()
@@ -79,26 +116,51 @@ function handleAudioClick() {
   muted = !muted;
 }
 
+//function for when the user clicked the camera button, the web will process so that the user's video sharing will be off or on.
 async function handleCameraClick() {
+  // When opening up the camera sharing for the first time, the app must first get the video.
   if (!videoStream) {
+    videoBtn.innerText = "Turn Camera off";
     await getVideo();
     return;
   }
-
   if (!cameraOff) {
     videoStream.getTracks().forEach((track) => track.stop());
-    videoBtn.innerText = "Turn Camera off";
+    videoBtn.innerText = "Turn Camera on";
     handleCameraChange();
   } else {
     await getVideo();
-    videoBtn.innerText = "Turn Camera on";
+    videoBtn.innerText = "Turn Camera off";
 
   }
   cameraOff = !cameraOff;
 }
 
+//function for when the user clicked the screen button, the web will process so that the user's screen sharing will be off or on.
+async function handleScreenClick() {
+  if (!screenStream) {
+    screenBtn.innerText = "Turn screen off";
+    await getScreen();
+    return;
+  }
+  if (!screenoff) {
+    screenStream.getTracks().forEach((track) => track.stop());
+    screenBtn.innerText = "Turn screen on";
+    handleScreenChange();
+  }
+  else if (screenoff) {
+    await getScreen();
+    screenBtn.innerText = "Turn screen off";
+  }
+  screenoff = !screenoff;
+}
+
+//function for when the user clicked the camera on and off button, the peer should know that and turn the video sharing off.
+//So this function sends that the camera has changed. 
+//The problem when just making the video off is that the screen does not go black as I assumed for the peer. Instead, for the peer the screen just stops whenever
+//the user stops their video sharing. So in order to fix this problem, I made a white canvas and switched the video for the peer anytime the video is turned off.
 async function handleCameraChange() {
-  if (!myPeerConnection) return; // myPeerConnection이 존재하지 않는 경우 종료
+  if (!myPeerConnection) return; // when there is no myPeerConnection, this function should not happen.
   trackevent = 2;
   // Find existing screen video sender
   const screenVideoSender = myPeerConnection
@@ -127,57 +189,9 @@ async function handleCameraChange() {
   socket.emit("send_media", offerDataString, roomName);
 }
 
-async function getScreen() {
-
-  try {
-    screenStream = await navigator.mediaDevices.getDisplayMedia({
-      audio: true,
-      video: true
-    });
-    trackevent = 1;
-    myScreen.srcObject = screenStream;
-    myPeerConnection.addTrack(screenStream.getVideoTracks()[0], screenStream);
-
-    const offer = await myPeerConnection.createOffer();
-    await myPeerConnection.setLocalDescription(offer);
-    const offerData = {
-      offer,
-      trackevent
-    };
-    const offerDataString = JSON.stringify(offerData);
-    socket.emit("send_media", offerDataString, roomName);
-  } catch (e) {
-    console.log(e);
-  }
-}
-
-
-
-async function handleScreenClick() {
-  if (!screenStream) {
-    screenBtn.innerText = "Turn screen off";
-    await getScreen();
-    // myPeerConnection = null; // 기존 커넥션 종료
-    // makeConnection(); // 새로운 커넥션 설정
-    return;
-  }
-
-  if (!screenoff) {
-    screenStream.getTracks().forEach((track) => track.stop());
-
-    // Create a new black video track
-    screenBtn.innerText = "Turn screen on";
-    handleScreenChange();
-  }
-  else if (screenoff) {
-    await getScreen(); // 화면 공유를 시작
-    screenBtn.innerText = "Turn screen off";
-  }
-  screenoff = !screenoff;
-}
-
+//same function as handleCameraChange()
 async function handleScreenChange() {
-  if (!myPeerConnection) return; // myPeerConnection이 존재하지 않는 경우 종료
+  if (!myPeerConnection) return;
   trackevent = 1;
   // Find existing screen video sender
   const screenVideoSender = myPeerConnection
@@ -206,12 +220,6 @@ async function handleScreenChange() {
   socket.emit("send_media", offerDataString, roomName);
 }
 
-screenBtn.addEventListener("click", handleScreenClick);
-videoBtn.addEventListener("click", handleCameraClick);
-cameraSelect.addEventListener("change", handleCameraChange);
-
-// --------------- wait room form (choose and enter a room) -----------------
-
 function createBlackVideoTrack() {
   const canvas = document.createElement("canvas");
   canvas.width = 640; // Set the desired width
@@ -227,24 +235,31 @@ function createBlackVideoTrack() {
   return canvasVideoTrack;
 }
 
+// Scroll to the bottom of the messages container
+function scrollToBottom() {
+  messages.scrollTop = messages.scrollHeight;
+}
+
+screenBtn.addEventListener("click", handleScreenClick);
+videoBtn.addEventListener("click", handleCameraClick);
+cameraSelect.addEventListener("change", handleCameraChange);
+
+// --------------- wait room form (choose and enter a room) -----------------
 
 function showRoom() {
   waitRoom.style.display = "none";
-
   callRoom.hidden = false;
   callRoom.style.display = "flex";
 }
 
 async function handleRoomSubmit(e) {
   e.preventDefault();
-
-  // 카메라, 마이크 장치 연결 설정
+  //make connection to peer. using ice candidate. look at initCall for more detail
   await initCall();
-  // 닉네임 설정
+  //setting nickname
   const nicknameInput = waitRoom.querySelector("#nickname");
   socket.emit("set_nickname", nicknameInput.value);
-
-  // 채팅방 입장
+  //entering chatting room
   const roomNameInput = waitRoom.querySelector("#roomName");
   socket.emit("enter_room", roomNameInput.value, showRoom);
 
@@ -253,26 +268,20 @@ async function handleRoomSubmit(e) {
 }
 
 async function initCall() {
-  // waitRoom.style.display = "none";
-  // // waitRoom.hidden = true;
-  // callRoom.hidden = false;
-  // callRoom.style.display = "flex";
   makeConnection();
 }
 
-
 waitRoomForm.addEventListener("submit", handleRoomSubmit);
 
-// --------- Socket Code ----------
+// --------------------------- Socket Code ------------------------------------------
 
+//when entering room, my server.js  will emit welcome, and it will enter this socket. Welcome socket will make data channel, and opens up my dataChannel.
 socket.on("welcome", async () => {
   myDataChannel = myPeerConnection.createDataChannel("chat");
   myDataChannel.addEventListener("message", addMessage);
-
   myDataChannel.addEventListener("open", () => {
     console.log("Data channel is open and ready to send/receive data");
   });
-  
 
   const offer = await myPeerConnection.createOffer();
   myPeerConnection.setLocalDescription(offer);
@@ -298,18 +307,17 @@ socket.on("receive_answer", (answer) => {
 });
 
 socket.on("receive_media", async (offerDataString) => {
-  console.log(myDataChannel);
   myPeerConnection.addEventListener("datachannel", (e) => {
     myDataChannel = e.channel;
     myDataChannel.addEventListener("message", addMessage);
   });
-
+  //this is getting the offerdata from the media handling section. Since I got two datas, event and trackevent, my frontend should be able to parse these two data.
   const offerData = JSON.parse(offerDataString);
   const offer = offerData.offer;
-  const receivedTrackEvent = offerData.trackevent;
-  console.log(receivedTrackEvent);
-  myPeerConnection.setRemoteDescription(offer);
+  trackevent = offerData.trackevent;
   trackevent = receivedTrackEvent;
+
+  myPeerConnection.setRemoteDescription(offer);
   // getMedia
   const answer = await myPeerConnection.createAnswer();
   myPeerConnection.setLocalDescription(answer);
@@ -320,17 +328,18 @@ socket.on("receive_ice", (ice) => {
   myPeerConnection.addIceCandidate(ice);
 });
 
-// --------- RTC Code ---------
+// --------------------------------------- RTC Code -------------------------------------------
 
 function handleIce(data) {
   socket.emit("send_ice", data.candidate, roomName);
 }
 
-
-
 function handleAddTrack(event) {
-  console.log(trackevent);
-  console.log(event);
+  //Because trackevent value has changed when sending and receiving sockets, when handling add track, my program knows the changed value of
+  //trackevent. Thus, my web will be able to know where to put the video.
+  //This coding all happened because screen sharing and video sharing track event kind is all video. If it was different I could have used
+  //if function so that if track event is video put peerVideo, and use else functon if other track event kind came in. But there was no other way
+  //to differeniate these two kinds. So I made trackevent variables and used it as a flag.
   if (trackevent === 1) {
     peerStream = new MediaStream([event.track]);
     peerScreen.srcObject = peerStream;
@@ -341,43 +350,42 @@ function handleAddTrack(event) {
   }
 }
 
-
-
 function makeConnection() {
   // Define STUN and TURN server configurations
   myPeerConnection = new RTCPeerConnection({
     iceServers: [
-        {
-          urls: "stun:stun.relay.metered.ca:80",
-        },
-        {
-          urls: "turn:a.relay.metered.ca:80",
-          username: "dbea1dda7e80fffd5e3810d5",
-          credential: "TmKDa1kTOtEcN/BG",
-        },
-        {
-          urls: "turn:a.relay.metered.ca:80?transport=tcp",
-          username: "dbea1dda7e80fffd5e3810d5",
-          credential: "TmKDa1kTOtEcN/BG",
-        },
-        {
-          urls: "turn:a.relay.metered.ca:443",
-          username: "dbea1dda7e80fffd5e3810d5",
-          credential: "TmKDa1kTOtEcN/BG",
-        },
-        {
-          urls: "turn:a.relay.metered.ca:443?transport=tcp",
-          username: "dbea1dda7e80fffd5e3810d5",
-          credential: "TmKDa1kTOtEcN/BG",
-        },
+      {
+        urls: "stun:stun.relay.metered.ca:80",
+      },
+      {
+        urls: "turn:a.relay.metered.ca:80",
+        username: "dbea1dda7e80fffd5e3810d5",
+        credential: "TmKDa1kTOtEcN/BG",
+      },
+      {
+        urls: "turn:a.relay.metered.ca:80?transport=tcp",
+        username: "dbea1dda7e80fffd5e3810d5",
+        credential: "TmKDa1kTOtEcN/BG",
+      },
+      {
+        urls: "turn:a.relay.metered.ca:443",
+        username: "dbea1dda7e80fffd5e3810d5",
+        credential: "TmKDa1kTOtEcN/BG",
+      },
+      {
+        urls: "turn:a.relay.metered.ca:443?transport=tcp",
+        username: "dbea1dda7e80fffd5e3810d5",
+        credential: "TmKDa1kTOtEcN/BG",
+      },
     ],
   });
-
+  //add ice candiate. Make connection between two peers
   myPeerConnection.addEventListener("icecandidate", handleIce);
+  //add track to stream my videos and screens
   myPeerConnection.addEventListener("track", handleAddTrack);
 }
 
-// --------- Data Channel Code ---------
+// ----------------------------------- Chatting Area ---------------------------------------------------
 
 function addMessage(e) {
   const li = document.createElement("li");
@@ -401,6 +409,7 @@ function handleChatSubmit(e) {
   }
   addMyMessage({ data: `You: ${input.value}` });
   input.value = "";
+  scrollToBottom();
 }
 
 chatForm.addEventListener("submit", handleChatSubmit);
