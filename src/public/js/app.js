@@ -345,17 +345,33 @@ function handleAddTrack(event) {
 
 function makeConnection() {
   // Define STUN and TURN server configurations
-  const iceServers = [
-    {
-      urls: [
-        'stun:stun.l.google.com:19302', // Google STUN server
-      ]
-    }
-  ];
-
-  const configuration = { iceServers };
-
-  myPeerConnection = new RTCPeerConnection(configuration);
+  myPeerConnection = new RTCPeerConnection({
+    iceServers: [
+        {
+          urls: "stun:stun.relay.metered.ca:80",
+        },
+        {
+          urls: "turn:a.relay.metered.ca:80",
+          username: "dbea1dda7e80fffd5e3810d5",
+          credential: "TmKDa1kTOtEcN/BG",
+        },
+        {
+          urls: "turn:a.relay.metered.ca:80?transport=tcp",
+          username: "dbea1dda7e80fffd5e3810d5",
+          credential: "TmKDa1kTOtEcN/BG",
+        },
+        {
+          urls: "turn:a.relay.metered.ca:443",
+          username: "dbea1dda7e80fffd5e3810d5",
+          credential: "TmKDa1kTOtEcN/BG",
+        },
+        {
+          urls: "turn:a.relay.metered.ca:443?transport=tcp",
+          username: "dbea1dda7e80fffd5e3810d5",
+          credential: "TmKDa1kTOtEcN/BG",
+        },
+    ],
+  });
 
   myPeerConnection.addEventListener("icecandidate", handleIce);
   myPeerConnection.addEventListener("track", handleAddTrack);
