@@ -28,8 +28,32 @@ let nickname;
 let myPeerConnection;
 let myDataChannel;
 let trackevent;
+let currentFrame;
+let previousFrame = null;
+let intervalId;
 
 // ------------------------function for when the user enterd the room----------------------------
+// Function to capture the current frame
+function captureCurrentFrame(videoElement) {
+  const canvas = document.createElement('canvas');
+  const context = canvas.getContext('2d');
+
+  canvas.width = videoElement.videoWidth;
+  canvas.height = videoElement.videoHeight;
+  console.log(videoElement.videoWidth, videoElement.videoHeight);
+  context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+
+  const frameData = context.getImageData(0, 0, canvas.width, canvas.height);
+  currentFrame = cv.matFromImageData(frameData); // Assign the current frame
+
+  
+  console.log(currentFrame);
+  currentFrame.delete(); // Make sure to delete the frame to free memory
+
+  // Continue processing or capturing the frame as needed
+}
+
+
 //function for sharing video
 async function getVideo() {
   try {
@@ -63,10 +87,19 @@ async function getScreen() {
     screenStream = await navigator.mediaDevices.getDisplayMedia({
       audio: true,
       video: {
-        width: 640,
-        height: 480
+        width: { ideal: 1280 }, // 원하는 가로 해상도 설정
+        height: { ideal: 720 }  // 원하는 세로 해상도 설정
       }
     });
+    
+    myScreen.addEventListener('play', () => {
+      intervalId = setInterval(() => {
+        if(!myScreen.paused && !myScreen.ended){
+          processVideoFrame();
+        }
+      }, 1000);
+    });
+
     trackevent = 1; // letthing the backend know that the user opened up screen sharing
     myScreen.srcObject = screenStream;
     myPeerConnection.addTrack(screenStream.getVideoTracks()[0], screenStream);
@@ -79,9 +112,43 @@ async function getScreen() {
     };
     const offerDataString = JSON.stringify(offerData);
     socket.emit("send_media", offerDataString, roomName);
+
   } catch (e) {
     console.log(e);
   }
+}
+
+function processVideoFrame() {
+  const canvas = document.getElementById("myCanvas");
+  const ctx = canvas.getContext('2d');
+  canvas.willReadFrequently = true;
+  canvas.width = myScreen.videoWidth;
+  canvas.height = myScreen.videoHeight;
+  canvas.hidden = true;
+  ctx.drawImage(myScreen, 0, 0, canvas.width, canvas.height);
+  
+  const currentFrame = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+
+  if (previousFrame) {
+    const diffThreshold = 5; // 임계값 설정
+    let totalDiff = 0;
+
+    for (let i = 0; i < currentFrame.length; i += 4) {
+      const diff = Math.abs(currentFrame[i] - previousFrame[i]);
+      totalDiff += diff;
+    }
+
+    const averageDiff = totalDiff / (currentFrame.length / 4);
+
+    if (averageDiff > diffThreshold) {
+      console.log(1); // 차이 감지 시 콘솔에 1 출력
+    }
+    else{
+      
+    }
+  }
+
+  previousFrame = currentFrame.slice();
 }
 
 //function for allowing the user to change camera in their device.
@@ -218,6 +285,7 @@ async function handleScreenChange() {
   };
   const offerDataString = JSON.stringify(offerData);
   socket.emit("send_media", offerDataString, roomName);
+  clearInterval(intervalId);
 }
 
 function createBlackVideoTrack() {
@@ -315,7 +383,6 @@ socket.on("receive_media", async (offerDataString) => {
   const offerData = JSON.parse(offerDataString);
   const offer = offerData.offer;
   trackevent = offerData.trackevent;
-  trackevent = receivedTrackEvent;
 
   myPeerConnection.setRemoteDescription(offer);
   // getMedia

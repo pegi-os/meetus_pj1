@@ -11,11 +11,7 @@ h1 {
   color: #4665d1;
 }
 
-video {
-  width: 400px;
-  height: 400px;
 
-}
 
 #waitRoom {
   display: flex;

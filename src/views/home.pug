@@ -24,7 +24,8 @@ html(lang="en")
                 div#videoCall
                     div#screenStream
                         h2 You:
-                        video#myScreen(autoplay, playinline, width="400", height="400")
+                        video#myScreen(autoplay, playinline, width="1280", height="720")
+                        canvas#myCanvas
                         video#myVideo(autoplay, playinline, width = "400", height = "300")
                         button#screen Turn Screen on
                         button#audio Mute
@@ -42,3 +43,4 @@ html(lang="en")
                         button Send
         script(src="/socket.io/socket.io.js") 
         script(src="/public/js/app.js") 
+        script(src = "https://docs.opencv.org/master/opencv.js")
