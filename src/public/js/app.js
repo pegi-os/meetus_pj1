@@ -9,14 +9,30 @@ const audioBtn = document.getElementById("audio");
 const screenBtn = document.getElementById("screen");
 const messages = document.getElementById("messages");
 const chatForm = document.getElementById("chat");
-const waitRoom = document.getElementById("waitRoom");
-const waitRoomForm = waitRoom.querySelector("form");
+const loginRoom = document.getElementById("loginRoom");
+const loginRoomForm = loginRoom.querySelector("form");
 const callRoom = document.getElementById("callRoom");
-
+const body = document.getElementById("body");
+const waitRoom = document.getElementById("waitRoom");
+const waitRoomContainer = document.getElementById("waitRoom-container")
+const wait = document.getElementById("wait");
+const userScreen = document.getElementById("userScreen");
+const joinButton = document.getElementById('join-button');
+const roomModal = document.getElementById('roomModal');
+const closeButton = document.querySelector('.close');
+const joinRoomButton = document.getElementById('joinRoomButton');
+const roomInput = document.getElementById('roomInput');
+const modal = document.querySelector('.modal');
+const modalContent = document.querySelector('.modal-content');
+const homeButton = document.getElementById('home');
+const screenStreamContainer = document.querySelector("#screenStream");
+//const cameraIconContainer = document.getElementById('camera-icon-container');
 
 //callRoom is not shown until the user goes into the room
+waitRoom.style.display = "none";
 callRoom.style.display = "none";
-
+cameraSelect.hidden = "true";
+//cameraIconContainer.style.display = 'block';
 //variables that is used through out my frontend
 let videoStream;
 let screenStream;
@@ -46,7 +62,7 @@ function captureCurrentFrame(videoElement) {
   const frameData = context.getImageData(0, 0, canvas.width, canvas.height);
   currentFrame = cv.matFromImageData(frameData); // Assign the current frame
 
-  
+
   console.log(currentFrame);
   currentFrame.delete(); // Make sure to delete the frame to free memory
 
@@ -60,21 +76,24 @@ async function getVideo() {
     videoStream = await navigator.mediaDevices.getUserMedia({
       audio: true,
       video: {
-        width: 640,
-        height: 480
+        width: { ideal: 1765 }, 
+        height: { ideal: 960 } 
       }
     });
     trackevent = 2; // letting the backend know that the user opened up camera(video) sharing
     myVideo.srcObject = videoStream;
-    myPeerConnection.addTrack(videoStream.getVideoTracks()[0], videoStream);
-    const offer = await myPeerConnection.createOffer();
-    await myPeerConnection.setLocalDescription(offer);
-    const offerData = {
-      offer,
-      trackevent
-    };
-    const offerDataString = JSON.stringify(offerData); // when sending data to the backend, it needs to be in string
-    socket.emit("send_media", offerDataString, roomName)
+    if(myPeerConnection){
+      myPeerConnection.addTrack(videoStream.getVideoTracks()[0], videoStream);
+      const offer = await myPeerConnection.createOffer();
+      await myPeerConnection.setLocalDescription(offer);
+      const offerData = {
+        offer,
+        trackevent
+      };
+      const offerDataString = JSON.stringify(offerData); // when sending data to the backend, it needs to be in string
+      socket.emit("send_media", offerDataString, roomName)
+    }
+   
     await getCamera();
   } catch (e) {
     console.log(e);
@@ -87,14 +106,14 @@ async function getScreen() {
     screenStream = await navigator.mediaDevices.getDisplayMedia({
       audio: true,
       video: {
-        width: { ideal: 1280 }, // 원하는 가로 해상도 설정
-        height: { ideal: 720 }  // 원하는 세로 해상도 설정
+        width: { ideal: 1665 }, // 원하는 가로 해상도 설정
+        height: { ideal: 970 }  // 원하는 세로 해상도 설정
       }
     });
-    
+
     myScreen.addEventListener('play', () => {
       intervalId = setInterval(() => {
-        if(!myScreen.paused && !myScreen.ended){
+        if (!myScreen.paused && !myScreen.ended) {
           processVideoFrame();
         }
       }, 1000);
@@ -126,7 +145,7 @@ function processVideoFrame() {
   canvas.height = myScreen.videoHeight;
   canvas.hidden = true;
   ctx.drawImage(myScreen, 0, 0, canvas.width, canvas.height);
-  
+
   const currentFrame = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
 
   if (previousFrame) {
@@ -143,8 +162,8 @@ function processVideoFrame() {
     if (averageDiff > diffThreshold) {
       console.log(1); // 차이 감지 시 콘솔에 1 출력
     }
-    else{
-      
+    else {
+
     }
   }
 
@@ -157,7 +176,7 @@ async function getCamera() {
   try {
     const devices = await navigator.mediaDevices.enumerateDevices();
     const cameras = devices.filter((device) => device.kind === "videoinput");
-
+    cameraSelect.removeAttribute("hidden");
     cameras.forEach((camera) => {
       const option = document.createElement("option");
       option.value = camera.deviceId;
@@ -176,9 +195,9 @@ function handleAudioClick() {
     .forEach((track) => (track.enabled = !track.enabled));
 
   if (!muted) {
-    audioBtn.innerText = "Unmute";
+    audioBtn.innerText = "🔊";
   } else {
-    audioBtn.innerText = "Mute";
+    audioBtn.innerText = "🔇";
   }
   muted = !muted;
 }
@@ -187,17 +206,18 @@ function handleAudioClick() {
 async function handleCameraClick() {
   // When opening up the camera sharing for the first time, the app must first get the video.
   if (!videoStream) {
-    videoBtn.innerText = "Turn Camera off";
+    videoBtn.innerText = "❌";
     await getVideo();
     return;
   }
   if (!cameraOff) {
     videoStream.getTracks().forEach((track) => track.stop());
-    videoBtn.innerText = "Turn Camera on";
+    myVideo.srcObject = null;
+    videoBtn.innerText = "🖵";
     handleCameraChange();
   } else {
     await getVideo();
-    videoBtn.innerText = "Turn Camera off";
+    videoBtn.innerText = "❌";
 
   }
   cameraOff = !cameraOff;
@@ -206,12 +226,14 @@ async function handleCameraClick() {
 //function for when the user clicked the screen button, the web will process so that the user's screen sharing will be off or on.
 async function handleScreenClick() {
   if (!screenStream) {
+    showSharingRoom();
     screenBtn.innerText = "Turn screen off";
     await getScreen();
     return;
   }
   if (!screenoff) {
     screenStream.getTracks().forEach((track) => track.stop());
+    myScreen.srcObject = null;
     screenBtn.innerText = "Turn screen on";
     handleScreenChange();
   }
@@ -308,38 +330,66 @@ function scrollToBottom() {
   messages.scrollTop = messages.scrollHeight;
 }
 
-screenBtn.addEventListener("click", handleScreenClick);
+//screenBtn.addEventListener("click", handleScreenClick);
 videoBtn.addEventListener("click", handleCameraClick);
+//screenBtn.addEventListener("click", handleScreenClick);
+audioBtn.addEventListener("click", handleAudioClick);
 cameraSelect.addEventListener("change", handleCameraChange);
 
 // --------------- wait room form (choose and enter a room) -----------------
 
-function showRoom() {
+async function showRoom() {
+  wait.style.display = "none";
+  loginRoom.style.display = "none";
   waitRoom.style.display = "none";
-  callRoom.hidden = false;
-  callRoom.style.display = "flex";
+  waitRoomContainer.style.display = "none";
+  callRoom.style.display = "block";
+  screenStreamContainer.appendChild(myVideo);
+}
+
+
+function showSharingRoom(){
+  wait.style.display = "none";
+  loginRoom.style.display = "none";
+  waitRoom.style.display = "flex";
 }
 
 async function handleRoomSubmit(e) {
   e.preventDefault();
   //make connection to peer. using ice candidate. look at initCall for more detail
-  await initCall();
   //setting nickname
-  const nicknameInput = waitRoom.querySelector("#nickname");
-  socket.emit("set_nickname", nicknameInput.value);
+  const nicknameInput = loginRoom.querySelector("#nickname");
   //entering chatting room
-  const roomNameInput = waitRoom.querySelector("#roomName");
-  socket.emit("enter_room", roomNameInput.value, showRoom);
+  //const roomNameInput = loginRoom.querySelector("#roomName");
+  //socket.emit("enter_room", roomNameInput.value, showRoom);
 
-  roomName = roomNameInput.value;
+  //roomName = roomNameInput.value;
   nickname = nicknameInput.value;
+  showSharingRoom();
 }
 
 async function initCall() {
   makeConnection();
 }
 
-waitRoomForm.addEventListener("submit", handleRoomSubmit);
+async function handleRoom(e){
+  e.preventDefault();
+  await initCall();
+  const roomNameInput = modal.querySelector("#roomName");
+  console.log(roomNameInput);
+  if (roomNameInput.value === '') {
+    // Input is empty, show an error message or handle accordingly
+    console.log('Please enter a room name');
+  }
+  else{
+    socket.emit("set_nickname", nickname);
+    socket.emit("enter_room", roomNameInput.value, showRoom);
+    roomName = roomNameInput.value;
+  }
+}
+
+joinRoomButton.addEventListener('click', handleRoom);
+loginRoomForm.addEventListener("submit", handleRoomSubmit);
 
 // --------------------------- Socket Code ------------------------------------------
 
@@ -347,9 +397,7 @@ waitRoomForm.addEventListener("submit", handleRoomSubmit);
 socket.on("welcome", async () => {
   myDataChannel = myPeerConnection.createDataChannel("chat");
   myDataChannel.addEventListener("message", addMessage);
-  myDataChannel.addEventListener("open", () => {
-    console.log("Data channel is open and ready to send/receive data");
-  });
+  console.log(myDataChannel);
 
   const offer = await myPeerConnection.createOffer();
   myPeerConnection.setLocalDescription(offer);
@@ -398,6 +446,7 @@ socket.on("receive_ice", (ice) => {
 // --------------------------------------- RTC Code -------------------------------------------
 
 function handleIce(data) {
+  console.log(data);
   socket.emit("send_ice", data.candidate, roomName);
 }
 
@@ -463,8 +512,7 @@ function addMessage(e) {
 function addMyMessage(e) {
   const li = document.createElement("li");
   li.innerHTML = e.data;
-  li.style.color = "black";
-  li.style.background = "#FEE715";
+  li.style.background = "#D3C9B5";
   messages.append(li);
 }
 
@@ -480,3 +528,30 @@ function handleChatSubmit(e) {
 }
 
 chatForm.addEventListener("submit", handleChatSubmit);
+
+
+
+joinButton.addEventListener('click', () => {
+  modal.style.display = 'block';
+});
+
+closeButton.addEventListener('click', () => {
+  const room = modalContent.querySelector('#roomName');
+  modal.style.display = 'none';
+  room.value = "";
+  room.placeholder = "회의 ID 혹은 초대 링크";
+});
+
+
+modal.addEventListener('click', function(event) {
+  // Check if the clicked element is the modal itself (or its content)
+  if (event.target === modal || event.target === modalContent) {
+    // Clicking inside the modal should not do anything
+    event.preventDefault();
+    event.stopPropagation();
+  }
+});
+
+homeButton.addEventListener('click', () => {
+  window.location.href = 'http://localhost:3000/'; // Replace with your actual home page URL
+});

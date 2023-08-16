@@ -21,8 +21,13 @@ const httpServer = http.createServer(app);
 const wsServer = SocketIO(httpServer);
 
 wsServer.on("connection", (socket) => {
-  socket["nickname"] = "Anonymous";
+  socket["nickname"] = "Annymous";
   
+  socket.onAny((eventName, ...args) => {
+    console.log(`Received event: ${eventName}`);
+    console.log("Arguments:", args);
+  });
+
   socket.on("enter_room", (roomName, done) => {
     socket.join(roomName);
     done();

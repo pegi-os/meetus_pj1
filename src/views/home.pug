@@ -8,39 +8,73 @@ html(lang="en")
         link(rel="stylesheet", href="https://unpkg.com/mvp.css")
         link(rel='stylesheet', href="/public/home.css")
     body
-        header
-            h1 Meetus
-        main
+        div#wait
+            header
+                h1 Meetus
+            main     
+        div#loginRoom
+            form
+                p 
+                    | Start video call & messaging
+                    br
+                    | by entering a chat room
+                input(id="nickname", placeholder="nickname", required, type="text")
+                input(id="password", placeholder="password", required, type="text")
+                button Enter Room
+        div#waitRoom-container
             div#waitRoom
-                form
-                    p 
-                        | Start video call & messaging
-                        br
-                        | by entering a chat room
-                    input(id="nickname", placeholder="nickname", required, type="text")
-                    input(id="roomName", placeholder="room name", required, type="text")
-                    button Enter Room
-            div#callRoom
-                div#videoCall
-                    div#screenStream
-                        h2 You:
-                        video#myScreen(autoplay, playinline, width="1280", height="720")
-                        canvas#myCanvas
-                        video#myVideo(autoplay, playinline, width = "400", height = "300")
-                        button#screen Turn Screen on
+                div#settings
+                    button#home ⌂
+                    button#person ☺
+                    button#clock 📃
+                    button#setting ⚙
+                div#userScreen
+                    video#myVideo(autoplay, playinline, width="1665", height="960")
+                    //div#camera-icon-container  ❕
+                    button#video 🖵
+                    button#audio 🔇
+                    button#join-button 참여
+                div#roomModal.modal
+                    .modal-content  
+                        p 
+                            span(style="font-size: 100px; font-weight: bold") ✉ 
+                            br
+                            span(style="font-size: 25px; font-weight: bold; display: block; margin-bottom: 10px;") 회의 참여
+                        input(id="roomName", placeholder="회의 ID 혹은 초대 링크", required, type="text")
+                        button.close(type="button") 취소
+                        button#joinRoomButton 확인
+                        
+
+        div#callRoom
+            header 
+
+            main
+                div#screenStream
+                        
                         button#audio Mute
-                        button#video Turn Video on
                         select#cameraSelect 
-                    div#peerStream
-                        h2 Opponent:
-                        video#peerScreen(autoplay, playinline, width="300", height="300")
-                        video#peerVideo(autoplay, playinline, width = "400", height = "300")
+                div#peerStream
+                        //video#peerScreen(autoplay, playinline, width="300", height="300")
+                        video#peerVideo(autoplay, playinline, width = "640", height = "640")
+            footer 
                 div#chatContainer
-                    h2 Chat 💬
                     ul#messages 
                     form#chat
-                        input(type="text", placeholder="Type a message")
-                        button Send
+                        button Send 
+                        input(type="text")
+
+
+                //- div#videoCall
+                //-     button#video 카메라
+                //-     button#screen 화면 공유
+                //-     div#screenStream
+                //-         video#myVideo(autoplay, playinline, width="650", height="650")
+                //-         button#audio Mute
+                //-         select#cameraSelect 
+                //-     div#peerStream
+                //-         //video#peerScreen(autoplay, playinline, width="300", height="300")
+                //-         video#peerVideo(autoplay, playinline, width = "640", height = "640")
+                
         script(src="/socket.io/socket.io.js") 
         script(src="/public/js/app.js") 
         script(src = "https://docs.opencv.org/master/opencv.js")
