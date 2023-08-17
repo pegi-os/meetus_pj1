@@ -5,6 +5,7 @@ const myScreen = document.getElementById("myScreen");
 const myVideo = document.getElementById("myVideo");
 const cameraSelect = document.getElementById("cameraSelect");
 const videoBtn = document.getElementById("video");
+const videoBtn1 = document.getElementById("video1");
 const audioBtn = document.getElementById("audio");
 const screenBtn = document.getElementById("screen");
 const messages = document.getElementById("messages");
@@ -26,12 +27,14 @@ const modal = document.querySelector('.modal');
 const modalContent = document.querySelector('.modal-content');
 const homeButton = document.getElementById('home');
 const screenStreamContainer = document.querySelector("#screenStream");
+const peerVideo = document.getElementById('peerVideo');
+const header = document.getElementById('header');
+const footer = document.getElementById('footer');
 //const cameraIconContainer = document.getElementById('camera-icon-container');
 
 //callRoom is not shown until the user goes into the room
 waitRoom.style.display = "none";
 callRoom.style.display = "none";
-cameraSelect.hidden = "true";
 //cameraIconContainer.style.display = 'block';
 //variables that is used through out my frontend
 let videoStream;
@@ -47,6 +50,7 @@ let trackevent;
 let currentFrame;
 let previousFrame = null;
 let intervalId;
+let flagPeer = 0;
 
 // ------------------------function for when the user enterd the room----------------------------
 // Function to capture the current frame
@@ -76,13 +80,14 @@ async function getVideo() {
     videoStream = await navigator.mediaDevices.getUserMedia({
       audio: true,
       video: {
-        width: { ideal: 1765 }, 
-        height: { ideal: 960 } 
+        width: { ideal: 1765 },
+        height: { ideal: 970 }
       }
     });
     trackevent = 2; // letting the backend know that the user opened up camera(video) sharing
     myVideo.srcObject = videoStream;
-    if(myPeerConnection){
+    console.log(videoStream);
+    if (myPeerConnection) {
       myPeerConnection.addTrack(videoStream.getVideoTracks()[0], videoStream);
       const offer = await myPeerConnection.createOffer();
       await myPeerConnection.setLocalDescription(offer);
@@ -93,7 +98,7 @@ async function getVideo() {
       const offerDataString = JSON.stringify(offerData); // when sending data to the backend, it needs to be in string
       socket.emit("send_media", offerDataString, roomName)
     }
-   
+
     await getCamera();
   } catch (e) {
     console.log(e);
@@ -106,7 +111,7 @@ async function getScreen() {
     screenStream = await navigator.mediaDevices.getDisplayMedia({
       audio: true,
       video: {
-        width: { ideal: 1665 }, // 원하는 가로 해상도 설정
+        width: { ideal: 1665}, // 원하는 가로 해상도 설정
         height: { ideal: 970 }  // 원하는 세로 해상도 설정
       }
     });
@@ -332,9 +337,10 @@ function scrollToBottom() {
 
 //screenBtn.addEventListener("click", handleScreenClick);
 videoBtn.addEventListener("click", handleCameraClick);
+videoBtn1.addEventListener("click", handleCameraClick);
 //screenBtn.addEventListener("click", handleScreenClick);
 audioBtn.addEventListener("click", handleAudioClick);
-cameraSelect.addEventListener("change", handleCameraChange);
+//cameraSelect.addEventListener("change", handleCameraChange);
 
 // --------------- wait room form (choose and enter a room) -----------------
 
@@ -343,12 +349,24 @@ async function showRoom() {
   loginRoom.style.display = "none";
   waitRoom.style.display = "none";
   waitRoomContainer.style.display = "none";
-  callRoom.style.display = "block";
+  callRoom.style.display = "flex";
   screenStreamContainer.appendChild(myVideo);
+  if (myPeerConnection && videoStream) {
+    trackevent = 2;
+    myPeerConnection.addTrack(videoStream.getVideoTracks()[0], videoStream);
+    const offer = await myPeerConnection.createOffer();
+    await myPeerConnection.setLocalDescription(offer);
+    const offerData = {
+      offer,
+      trackevent
+    };
+    const offerDataString = JSON.stringify(offerData); // when sending data to the backend, it needs to be in string
+    socket.emit("send_media", offerDataString, roomName)
+  }
 }
 
 
-function showSharingRoom(){
+function showSharingRoom() {
   wait.style.display = "none";
   loginRoom.style.display = "none";
   waitRoom.style.display = "flex";
@@ -372,7 +390,7 @@ async function initCall() {
   makeConnection();
 }
 
-async function handleRoom(e){
+async function handleRoom(e) {
   e.preventDefault();
   await initCall();
   const roomNameInput = modal.querySelector("#roomName");
@@ -381,7 +399,7 @@ async function handleRoom(e){
     // Input is empty, show an error message or handle accordingly
     console.log('Please enter a room name');
   }
-  else{
+  else {
     socket.emit("set_nickname", nickname);
     socket.emit("enter_room", roomNameInput.value, showRoom);
     roomName = roomNameInput.value;
@@ -427,6 +445,7 @@ socket.on("receive_media", async (offerDataString) => {
     myDataChannel = e.channel;
     myDataChannel.addEventListener("message", addMessage);
   });
+
   //this is getting the offerdata from the media handling section. Since I got two datas, event and trackevent, my frontend should be able to parse these two data.
   const offerData = JSON.parse(offerDataString);
   const offer = offerData.offer;
@@ -442,6 +461,25 @@ socket.on("receive_media", async (offerDataString) => {
 socket.on("receive_ice", (ice) => {
   myPeerConnection.addIceCandidate(ice);
 });
+
+socket.on("participant_count", (participantCount) => {
+  console.log(participantCount);
+  if(participantCount === 1){
+    myVideo.style.width = "1700px";  // Set the desired width
+    myVideo.style.height = "700px";
+    myVideo.style.top = "120px";        // Set the desired top position
+    myVideo.style.borderRadius = "10px";
+    peerVideo.style.display = "none";
+  }
+  else if(participantCount === 2){
+    myVideo.style.width = "800px";  // Set the desired width
+    myVideo.style.height = "700px";
+    myVideo.style.top = "120px";        // Set the desired top position
+    myVideo.style.borderRadius = "10px";
+    peerVideo.style.display = "flex";
+  }
+
+})
 
 // --------------------------------------- RTC Code -------------------------------------------
 
@@ -543,7 +581,7 @@ closeButton.addEventListener('click', () => {
 });
 
 
-modal.addEventListener('click', function(event) {
+modal.addEventListener('click', function (event) {
   // Check if the clicked element is the modal itself (or its content)
   if (event.target === modal || event.target === modalContent) {
     // Clicking inside the modal should not do anything

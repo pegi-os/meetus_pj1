@@ -14,17 +14,23 @@ h1 {
 }
 
 body{
-  
+  overflow: hidden;
+  resize: none;
 }
 
 header{
   position: flex;
   padding: 0;
 }
+
+footer{
+  position: flex;
+}
+
 #waitRoom-container {
   position: relative; /* 부모 요소를 상대적 위치로 설정 */
   width: 1665px;
-  height: 960px;
+  height: 970px;
 }
 
 #myVideo {
@@ -63,6 +69,8 @@ header{
   justify-content: center;
   align-items: center;
   line-height: 0;
+  z-index: 10;
+  pointer-events: all;
 }
 
 
@@ -100,8 +108,14 @@ header{
 }
 
 #peerVideo{
-  background-color: #EFF1F0;
+  position: absolute;
+  margin-top: 120px;
+  margin-left: 250px;
+  height: 700px;
+  width: 800px;
+  background-color: #5d5d5d;
   border-radius: 10px;
+  
 }
 
 #loginRoom {
@@ -148,21 +162,20 @@ header{
 
 
 #callRoom {
-  padding: 30px;
+  position: relative;
   line-height: 0;
-  flex-direction: row;
-
-  background-color: #E2E8F6;
-  overflow: hidden;
+  flex-direction: column;
+  background-color: #1a1a1a;
 }
 #videoCall {
   display: flex;
 }
 
 #screenStream {
- position: absolute;
- padding-left: 8px;
- padding-top: 60px;
+ position: relative;
+ padding-top: 500px;
+ width: 10px;
+ height: 10px;
  z-index: 1;
 }
 
@@ -179,7 +192,8 @@ header{
 
 #peerStream {
   padding-left: 700px;
-
+  position: absolute;
+  z-index: 1;
 }
 
 #myScreen{
@@ -187,6 +201,8 @@ header{
 }
 
 #chatContainer {
+  margin-top: 500px;
+  margin-bottom: 100px;
   margin-left: 100px;
   display: flex;
   flex-direction: column;
@@ -199,7 +215,7 @@ header{
 
 #messages {
   width: 145%;
-  height: 500px;
+  height: 100px;
   overflow-y: scroll;
   padding: 0;
 }
@@ -366,4 +382,37 @@ header{
   display: flex; /* 텍스트를 가운데로 정렬하기 위해 Flexbox 사용 */
   justify-content: center; /* 수평으로 가운데 정렬 */
   align-items: center; /* 수직으로 가운데 정렬 */
+}
+
+#header {
+  width: 1800px;
+  height: 100px;
+  position: absolute;
+  background-color: #1a1a1a;
+  padding-left: 100px;
+  border-bottom: 2px solid black;
+}
+
+#footer {
+  margin-top: 860px;
+  width: 1800px;
+  height: 100px;
+  position: absolute;
+  background-color: #202124;
+  padding-left: 100px;
+  border-top: 2px solid black;
+  z-index: 1;
+}
+
+#buttonPos {
+  position: relative;
+  margin-top: 1090px;
+  margin-left: 1000px;
+  z-index: 10;
+}
+
+@media screen and (max-width: 768px) {
+  .content {
+      width: 100%;
+  }
 }

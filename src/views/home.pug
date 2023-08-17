@@ -29,7 +29,7 @@ html(lang="en")
                     button#clock 📃
                     button#setting ⚙
                 div#userScreen
-                    video#myVideo(autoplay, playinline, width="1665", height="960")
+                    video#myVideo(autoplay, playinline, width="1665", height="970")
                     //div#camera-icon-container  ❕
                     button#video 🖵
                     button#audio 🔇
@@ -46,22 +46,22 @@ html(lang="en")
                         
 
         div#callRoom
-            header 
-
-            main
-                div#screenStream
-                        
-                        button#audio Mute
-                        select#cameraSelect 
-                div#peerStream
-                        //video#peerScreen(autoplay, playinline, width="300", height="300")
-                        video#peerVideo(autoplay, playinline, width = "640", height = "640")
-            footer 
-                div#chatContainer
-                    ul#messages 
-                    form#chat
-                        button Send 
-                        input(type="text")
+            div#header
+            div#screenStream 
+                //- button#audio Mute
+                //- select#cameraSelect 
+            div#peerStream
+                //-video#peerScreen(autoplay, playinline, width="300", height="300")
+                video#peerVideo(autoplay, playinline, width = "640", height = "640")
+            div#footer
+            
+                button#video1 🖵
+            div#chatContainer
+            
+                ul#messages 
+                form#chat
+                    button Send 
+                    input(type="text")
 
 
                 //- div#videoCall
