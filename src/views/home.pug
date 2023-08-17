@@ -21,16 +21,15 @@ html(lang="en")
                 input(id="nickname", placeholder="nickname", required, type="text")
                 input(id="password", placeholder="password", required, type="text")
                 button Enter Room
-        div#waitRoom-container
+        div#waitRoom-container.my-element
             div#waitRoom
                 div#settings
                     button#home ⌂
                     button#person ☺
                     button#clock 📃
-                    button#setting ⚙
+                    button#setting ⚙       
                 div#userScreen
                     video#myVideo(autoplay, playinline, width="1665", height="970")
-                    //div#camera-icon-container  ❕
                     button#video 🖵
                     button#audio 🔇
                     button#join-button 참여

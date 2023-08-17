@@ -29,34 +29,23 @@ footer{
 
 #waitRoom-container {
   position: relative; /* 부모 요소를 상대적 위치로 설정 */
-  width: 1665px;
-  height: 970px;
+  width: 100vw; /* 화면 너비의 100% */
+  height: 100vh; /* 화면 높이의 100% */
+  margin: auto;
 }
 
 #myVideo {
   position: absolute;
   margin-left: 100px;
-  width: 1765px;
-  height: 960px;
+  width: 100vw; /* 화면 너비의 100% */
+  height: 100vh; /* 화면 높이의 100% */
   background-color: #5d5d5d;
 }
 
-#camera-icon-container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none; /* Prevent interactions with the camera emoji */
-}
-
 #video {
-  position: absolute; /* 버튼을 비디오 상자 내부에 위치시킴 */
+  position: absolute;
   bottom: 150px;
-  right: 540px;
+  right: 740px;
   background-color: #323232;
   color: white;
   border: none;
@@ -68,16 +57,15 @@ footer{
   display: flex;
   justify-content: center;
   align-items: center;
-  line-height: 0;
-  z-index: 10;
+  line-height: 0; 
   pointer-events: all;
+  
 }
 
-
 #audio {
-  position: absolute; /* 버튼을 비디오 상자 내부에 위치시킴 */
+  position: absolute;
   bottom: 150px;
-  right: 705px;
+  right: 905px;
   background-color: #323232;
   color: white;
   border: none;
@@ -93,9 +81,9 @@ footer{
 }
 
 #join-button{
-  position: absolute; /* 버튼을 비디오 상자 내부에 위치시킴 */
+  position: absolute;
   bottom: 30px;
-  right: 600px;
+  right: 800px;
   background-color: #007bff;
   color: white;
   border: none;
@@ -107,6 +95,146 @@ footer{
   font-size: 20px;  
 }
 
+#settings{
+  width: 100vw; /* 화면 너비의 100% */
+  height: 100vh; /* 화면 높이의 100% */
+  background-color: black; /* 박스의 배경 색상 */
+  position: absolute;
+}
+
+#home {
+  margin-left: 10px;
+  margin-top: 40px;
+  border: none;
+  border-radius: 50%;
+  width: 60px; /* 버튼의 너비를 조정 */
+  height: 60px; /* 버튼의 높이를 조정 */
+  background-color: #323232;
+  color: #fff;
+  font-size: 25px; /* 글자 크기를 조정 */
+  cursor: pointer;
+  display: flex; /* 텍스트를 가운데로 정렬하기 위해 Flexbox 사용 */
+  justify-content: center; /* 수평으로 가운데 정렬 */
+  align-items: center; /* 수직으로 가운데 정렬 */
+}
+
+#person {
+  margin-left: 10px;
+  margin-top: 40px;
+  border: none;
+  border-radius: 50%;
+  width: 60px; /* 버튼의 너비를 조정 */
+  height: 60px; /* 버튼의 높이를 조정 */
+  background-color: #323232;
+  color: #fff;
+  font-size: 25px; /* 글자 크기를 조정 */
+  cursor: pointer;
+  display: flex; /* 텍스트를 가운데로 정렬하기 위해 Flexbox 사용 */
+  justify-content: center; /* 수평으로 가운데 정렬 */
+  align-items: center; /* 수직으로 가운데 정렬 */
+}
+
+#clock {
+  margin-left: 10px;
+  margin-top: 40px;
+  border: none;
+  border-radius: 50%;
+  width: 60px; /* 버튼의 너비를 조정 */
+  height: 60px; /* 버튼의 높이를 조정 */
+  background-color: #323232;
+  color: #fff;
+  font-size: 25px; /* 글자 크기를 조정 */
+  cursor: pointer;
+  display: flex; /* 텍스트를 가운데로 정렬하기 위해 Flexbox 사용 */
+  justify-content: center; /* 수평으로 가운데 정렬 */
+  align-items: center; /* 수직으로 가운데 정렬 */
+}
+
+#setting {
+  margin-left: 10px;
+  margin-top: 40px;
+  border: none;
+  border-radius: 50%;
+  width: 60px; /* 버튼의 너비를 조정 */
+  height: 60px; /* 버튼의 높이를 조정 */
+  background-color: #323232;
+  color: #fff;
+  font-size: 25px; /* 글자 크기를 조정 */
+  cursor: pointer;
+  display: flex; /* 텍스트를 가운데로 정렬하기 위해 Flexbox 사용 */
+  justify-content: center; /* 수평으로 가운데 정렬 */
+  align-items: center; /* 수직으로 가운데 정렬 */
+}
+
+#userScreen{
+  width: 100vw; /* 화면 너비의 100% */
+  height: 100vh; /* 화면 높이의 100% */
+}
+  .modal {
+    display: none;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%; /* Set the width to 50% of the viewport width */
+    height: 100%; /* Set the height to 50% of the viewport height */
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+
+.modal-content {
+  position: absolute;
+  background-color: #fefefe;
+  margin-left: 650px; 
+  margin-top: 200px;
+  padding: 30px;
+  border: 1px solid #888;
+  width: 600px;
+  left: 30px;
+  text-align: center;
+  border-radius: 10px;
+  
+}
+
+.modal-content > p {
+  font-size: 50px;
+}
+
+
+.modal-content > input {
+  border-radius: 10px ;
+  margin-left: 30px;
+  width: 500px;
+  height: 50px;
+}
+
+#joinRoomButton {
+  border-radius: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 10px;
+  width: 110px;
+  height: 60px;
+  font-size: 20px;
+  margin-left: 50px;
+}
+
+.close {
+  color: black;
+  font-size: 20px;
+  font-weight: bold;
+  background-color: white;
+  border: 1px solid gray;
+  border-radius: 10px;
+}
+
+
+
+
+
+
 #peerVideo{
   position: absolute;
   margin-top: 120px;
@@ -115,7 +243,6 @@ footer{
   width: 800px;
   background-color: #5d5d5d;
   border-radius: 10px;
-  
 }
 
 #loginRoom {
@@ -157,9 +284,6 @@ footer{
   line-height: 22px;
   border-radius: 18px;
 }
-
-
-
 
 #callRoom {
   position: relative;
@@ -252,138 +376,6 @@ footer{
 }
 
 
-#settings{
-  width: 100px; /* 박스의 너비 */
-  height: 960px; /* 박스의 높이 */
-  background-color: black; /* 박스의 배경 색상 */
-  position: absolute;
-}
-
-  .modal {
-    display: none;
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 100%; /* Set the width to 50% of the viewport width */
-    height: 100%; /* Set the height to 50% of the viewport height */
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.4);
-  }
-
-.modal-content {
-  position: absolute;
-  background-color: #fefefe;
-  margin-left: 650px; 
-  margin-top: 200px;
-  padding: 30px;
-  border: 1px solid #888;
-  width: 600px;
-  left: 30px;
-  text-align: center;
-  border-radius: 10px;
-  
-}
-
-.modal-content > p {
-  font-size: 50px;
-}
-
-
-.modal-content > input {
-  border-radius: 10px ;
-  margin-left: 30px;
-  width: 500px;
-  height: 50px;
-}
-
-#joinRoomButton {
-  border-radius: 10px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  cursor: pointer;
-  border-radius: 10px;
-  width: 110px;
-  height: 60px;
-  font-size: 20px;
-  margin-left: 50px;
-}
-
-.close {
-  color: black;
-  font-size: 20px;
-  font-weight: bold;
-  background-color: white;
-  border: 1px solid gray;
-  border-radius: 10px;
-}
-
-
-#home {
-  margin-left: 10px;
-  margin-top: 40px;
-  border: none;
-  border-radius: 50%;
-  width: 60px; /* 버튼의 너비를 조정 */
-  height: 60px; /* 버튼의 높이를 조정 */
-  background-color: #323232;
-  color: #fff;
-  font-size: 25px; /* 글자 크기를 조정 */
-  cursor: pointer;
-  display: flex; /* 텍스트를 가운데로 정렬하기 위해 Flexbox 사용 */
-  justify-content: center; /* 수평으로 가운데 정렬 */
-  align-items: center; /* 수직으로 가운데 정렬 */
-}
-
-#person {
-  margin-left: 10px;
-  margin-top: 40px;
-  border: none;
-  border-radius: 50%;
-  width: 60px; /* 버튼의 너비를 조정 */
-  height: 60px; /* 버튼의 높이를 조정 */
-  background-color: #323232;
-  color: #fff;
-  font-size: 25px; /* 글자 크기를 조정 */
-  cursor: pointer;
-  display: flex; /* 텍스트를 가운데로 정렬하기 위해 Flexbox 사용 */
-  justify-content: center; /* 수평으로 가운데 정렬 */
-  align-items: center; /* 수직으로 가운데 정렬 */
-}
-
-#clock {
-  margin-left: 10px;
-  margin-top: 40px;
-  border: none;
-  border-radius: 50%;
-  width: 60px; /* 버튼의 너비를 조정 */
-  height: 60px; /* 버튼의 높이를 조정 */
-  background-color: #323232;
-  color: #fff;
-  font-size: 25px; /* 글자 크기를 조정 */
-  cursor: pointer;
-  display: flex; /* 텍스트를 가운데로 정렬하기 위해 Flexbox 사용 */
-  justify-content: center; /* 수평으로 가운데 정렬 */
-  align-items: center; /* 수직으로 가운데 정렬 */
-}
-
-#setting {
-  margin-left: 10px;
-  margin-top: 40px;
-  border: none;
-  border-radius: 50%;
-  width: 60px; /* 버튼의 너비를 조정 */
-  height: 60px; /* 버튼의 높이를 조정 */
-  background-color: #323232;
-  color: #fff;
-  font-size: 25px; /* 글자 크기를 조정 */
-  cursor: pointer;
-  display: flex; /* 텍스트를 가운데로 정렬하기 위해 Flexbox 사용 */
-  justify-content: center; /* 수평으로 가운데 정렬 */
-  align-items: center; /* 수직으로 가운데 정렬 */
-}
-
 #header {
   width: 1800px;
   height: 100px;
@@ -409,10 +401,4 @@ footer{
   margin-top: 1090px;
   margin-left: 1000px;
   z-index: 10;
-}
-
-@media screen and (max-width: 768px) {
-  .content {
-      width: 100%;
-  }
 }
