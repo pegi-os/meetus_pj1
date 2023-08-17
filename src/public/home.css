@@ -45,8 +45,9 @@ footer{
 
 #video {
   position: absolute;
-  bottom: 150px;
-  right: 740px;
+  top: 80%;
+  left: 55%;
+  transform: translate(-50%, -50%);
   background-color: #323232;
   color: white;
   border: none;
@@ -58,15 +59,15 @@ footer{
   display: flex;
   justify-content: center;
   align-items: center;
-  line-height: 0; 
+  line-height: 0;
   pointer-events: all;
-  
 }
 
 #audio {
   position: absolute;
-  bottom: 150px;
-  right: 905px;
+  top: 80%;
+  left: 47%;
+  transform: translate(-50%, -50%);
   background-color: #323232;
   color: white;
   border: none;
@@ -83,8 +84,9 @@ footer{
 
 #join-button{
   position: absolute;
-  bottom: 30px;
-  right: 800px;
+  top: 90%;
+  left: 51%;
+  transform: translate(-50%, -50%);
   background-color: #007bff;
   color: white;
   border: none;
