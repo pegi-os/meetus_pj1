@@ -36,8 +36,9 @@ footer{
 
 #myVideo {
   position: absolute;
-  margin-left: 100px;
-  width: 100vw; /* 화면 너비의 100% */
+  left: 100px;
+ 
+  width: 95vw; /* 화면 너비의 100% */
   height: 100vh; /* 화면 높이의 100% */
   background-color: #5d5d5d;
 }
