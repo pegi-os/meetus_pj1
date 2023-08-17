@@ -66,7 +66,7 @@ footer{
 #audio {
   position: absolute;
   top: 80%;
-  left: 47%;
+  left: 45%;
   transform: translate(-50%, -50%);
   background-color: #323232;
   color: white;
@@ -85,7 +85,7 @@ footer{
 #join-button{
   position: absolute;
   top: 90%;
-  left: 51%;
+  left: 50%;
   transform: translate(-50%, -50%);
   background-color: #007bff;
   color: white;
@@ -184,19 +184,19 @@ footer{
     background-color: rgba(0, 0, 0, 0.4);
   }
 
-.modal-content {
-  position: absolute;
-  background-color: #fefefe;
-  margin-left: 650px; 
-  margin-top: 200px;
-  padding: 30px;
-  border: 1px solid #888;
-  width: 600px;
-  left: 30px;
-  text-align: center;
-  border-radius: 10px;
-  
-}
+  .modal-content {
+    position: absolute;
+    background-color: #fefefe;
+    padding: 30px;
+    border: 1px solid #888;
+    width: 600px;
+    text-align: center;
+    border-radius: 10px;
+    
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
 
 .modal-content > p {
   font-size: 50px;
@@ -235,15 +235,12 @@ footer{
 
 
 
-
-
-
 #peerVideo{
   position: absolute;
   margin-top: 120px;
   margin-left: 250px;
-  height: 700px;
-  width: 800px;
+  height: 75vh;
+  width: 40vw;
   background-color: #5d5d5d;
   border-radius: 10px;
 }
@@ -293,6 +290,8 @@ footer{
   line-height: 0;
   flex-direction: column;
   background-color: #1a1a1a;
+  height: 100vh;
+  width: 100vw;
 }
 #videoCall {
   display: flex;
@@ -380,8 +379,8 @@ footer{
 
 
 #header {
-  width: 1800px;
-  height: 100px;
+  width: 100vw;
+  height: 10vh;
   position: absolute;
   background-color: #1a1a1a;
   padding-left: 100px;
@@ -390,8 +389,8 @@ footer{
 
 #footer {
   margin-top: 860px;
-  width: 1800px;
-  height: 100px;
+  width: 100vw;
+  height: 100vh;
   position: absolute;
   background-color: #202124;
   padding-left: 100px;

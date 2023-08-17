@@ -465,15 +465,15 @@ socket.on("receive_ice", (ice) => {
 socket.on("participant_count", (participantCount) => {
   console.log(participantCount);
   if(participantCount === 1){
-    myVideo.style.width = "1700px";  // Set the desired width
-    myVideo.style.height = "700px";
+    myVideo.style.width = "90vw";  // Set the desired width
+    myVideo.style.height = "75vh";
     myVideo.style.top = "120px";        // Set the desired top position
     myVideo.style.borderRadius = "10px";
     peerVideo.style.display = "none";
   }
   else if(participantCount === 2){
-    myVideo.style.width = "800px";  // Set the desired width
-    myVideo.style.height = "700px";
+    myVideo.style.width = "40vw";  // Set the desired width
+    myVideo.style.height = "75vh";
     myVideo.style.top = "120px";        // Set the desired top position
     myVideo.style.borderRadius = "10px";
     peerVideo.style.display = "flex";
