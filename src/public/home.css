@@ -37,7 +37,6 @@ footer{
 #myVideo {
   position: absolute;
   left: 100px;
- 
   width: 95vw; /* 화면 너비의 100% */
   height: 100vh; /* 화면 높이의 100% */
   background-color: #5d5d5d;
@@ -327,21 +326,24 @@ footer{
 }
 
 #chatContainer {
-  margin-top: 500px;
-  margin-bottom: 100px;
-  margin-left: 100px;
-  display: flex;
-  flex-direction: column;
-  align-items: right;
-  padding: 10px;
-  background-color: #AFC6E9;
+  display: none;
+  position: fixed;
+  height: 800px;
+  width: 400px;
+  bottom: 100px;
+  right: 20px;
   border-radius: 10px;
-  padding-top: 30px;
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+  z-index: 15;
 }
 
+
 #messages {
-  width: 145%;
-  height: 100px;
+  width: 100%;
+  height: 550px;
   overflow-y: scroll;
   padding: 0;
 }
@@ -357,26 +359,26 @@ footer{
 }
 
 #chat {
-  color: #D9D9D9;
-  width: 145%;
-  border-radius: unset;
-  border: none;
-  box-shadow: none;
+  display: flex;
+  background-color: white;
 }
 
 #chat > input {
   background-color: #D9D9D9;
   border-color: #D9D9D9;
-  align-items: center;
-  width: 53%;
-  height: 50px;
+  width: 70%; /* Adjust the width as needed */
+  border-radius: 5px;
+  top: 300px;
+  border: none;
 }
 
 #chat > button {
-  margin-left: 350px; /* 버튼과 입력 요소 사이의 간격 조정 */
+  background-color: black;
+  color: white;
+  border: none;
   border-radius: 20px;
+  margin-left: 10px; /* Adding some spacing between input and button */
 }
-
 
 #header {
   width: 100vw;
@@ -385,6 +387,7 @@ footer{
   background-color: #1a1a1a;
   padding-left: 100px;
   border-bottom: 2px solid black;
+  z-index: 1;
 }
 
 #footer {
@@ -396,6 +399,7 @@ footer{
   padding-left: 100px;
   border-top: 2px solid black;
   z-index: 1;
+  flex-direction: column;
 }
 
 #buttonPos {
@@ -403,4 +407,112 @@ footer{
   margin-top: 1090px;
   margin-left: 1000px;
   z-index: 10;
+}
+
+#callVideo {
+  margin-top: 15px;
+  margin-left: 870px;
+  background-color: #323232;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 100px;
+  height: 50px;
+  width: 100px;
+  font-size: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  line-height: 0;
+  pointer-events: all;
+  position: absolute;
+  z-index: 10;
+}
+
+#callAudio {
+  margin-top: 15px;
+  margin-left: 670px;
+  position: absolute;
+  background-color: #323232;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 100px;
+  height: 50px;
+  width: 100px;
+  font-size: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  line-height: 0;
+  pointer-events: all;
+  z-index: 10;
+}
+
+#callDisplay {
+  /* left:5; */
+  margin-right: 200px;
+  margin-top: 15px;
+  position: absolute;
+  background-color: #323232;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 100px;
+  height: 50px;
+  width: 100px;
+  font-size: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  line-height: 0;
+  pointer-events: all;
+  z-index: 10;
+}
+
+#callChat{
+  margin-left: 1570px;
+  margin-top: 15px;
+  position: absolute;
+  background-color: #323232;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 100px;
+  height: 50px;
+  width: 100px;
+  font-size: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  line-height: 0;
+  pointer-events: all;
+  z-index: 10;
+}
+
+#callPeople {
+  display: absolute;
+  font-size: 18px;
+  margin-top: 25px;
+  background-color: #323232;
+  border-radius: 100px;
+  height: 50px;
+  width: 109px;
+  line-height: 0;
+  justify-content: center;
+  align-items: center;
+}
+
+#disconnect {
+  display: absolute;
+  font-size: 20px;
+  margin-top: 25px;
+  margin-left: 1450px;
+  background-color: #323232;
+  border-radius: 100px;
+  height: 50px;
+  width: 109px;
+  line-height: 0;
+  justify-content: center;
+  align-items: center;
 }

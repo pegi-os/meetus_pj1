@@ -1,6 +1,4 @@
-const socket = io();
 
-//getElement
 const myScreen = document.getElementById("myScreen");
 const myVideo = document.getElementById("myVideo");
 const cameraSelect = document.getElementById("cameraSelect");
@@ -8,28 +6,28 @@ const videoBtn = document.getElementById("video");
 const videoBtn1 = document.getElementById("video1");
 const audioBtn = document.getElementById("audio");
 const screenBtn = document.getElementById("screen");
-const messages = document.getElementById("messages");
-const chatForm = document.getElementById("chat");
-const loginRoom = document.getElementById("loginRoom");
-const loginRoomForm = loginRoom.querySelector("form");
-const callRoom = document.getElementById("callRoom");
-const body = document.getElementById("body");
-const waitRoom = document.getElementById("waitRoom");
-const waitRoomContainer = document.getElementById("waitRoom-container")
-const wait = document.getElementById("wait");
-const userScreen = document.getElementById("userScreen");
-const joinButton = document.getElementById('join-button');
-const roomModal = document.getElementById('roomModal');
-const closeButton = document.querySelector('.close');
-const joinRoomButton = document.getElementById('joinRoomButton');
-const roomInput = document.getElementById('roomInput');
-const modal = document.querySelector('.modal');
-const modalContent = document.querySelector('.modal-content');
-const homeButton = document.getElementById('home');
-const screenStreamContainer = document.querySelector("#screenStream");
-const peerVideo = document.getElementById('peerVideo');
-const header = document.getElementById('header');
-const footer = document.getElementById('footer');
+// const messages = document.getElementById("messages");
+// const chatForm = document.getElementById("chat");
+// const loginRoom = document.getElementById("loginRoom");
+// const loginRoomForm = loginRoom.querySelector("form");
+// const callRoom = document.getElementById("callRoom");
+// const body = document.getElementById("body");
+// const waitRoom = document.getElementById("waitRoom");
+// const waitRoomContainer = document.getElementById("waitRoom-container")
+// const wait = document.getElementById("wait");
+// const userScreen = document.getElementById("userScreen");
+// const joinButton = document.getElementById('join-button');
+// const roomModal = document.getElementById('roomModal');
+// const closeButton = document.querySelector('.close');
+// const joinRoomButton = document.getElementById('joinRoomButton');
+// const roomInput = document.getElementById('roomInput');
+// const modal = document.querySelector('.modal');
+// const modalContent = document.querySelector('.modal-content');
+// const homeButton = document.getElementById('home');
+// const screenStreamContainer = document.querySelector("#screenStream");
+// const peerVideo = document.getElementById('peerVideo');
+// const header = document.getElementById('header');
+// const footer = document.getElementById('footer');
 //const cameraIconContainer = document.getElementById('camera-icon-container');
 
 //callRoom is not shown until the user goes into the room
@@ -42,15 +40,15 @@ let screenStream;
 let muted = false;
 let screenoff = false;
 let cameraOff = false;
-let roomName;
-let nickname;
-let myPeerConnection;
-let myDataChannel;
-let trackevent;
-let currentFrame;
-let previousFrame = null;
-let intervalId;
-let flagPeer = 0;
+// let roomName;
+// let nickname;
+// let myPeerConnection;
+// let myDataChannel;
+// let trackevent;
+// let currentFrame;
+// let previousFrame = null;
+// let intervalId;
+// let flagPeer = 0;
 
 // ------------------------function for when the user enterd the room----------------------------
 // Function to capture the current frame
@@ -340,256 +338,3 @@ videoBtn.addEventListener("click", handleCameraClick);
 videoBtn1.addEventListener("click", handleCameraClick);
 //screenBtn.addEventListener("click", handleScreenClick);
 audioBtn.addEventListener("click", handleAudioClick);
-//cameraSelect.addEventListener("change", handleCameraChange);
-
-// --------------- wait room form (choose and enter a room) -----------------
-
-async function showRoom() {
-  wait.style.display = "none";
-  loginRoom.style.display = "none";
-  waitRoom.style.display = "none";
-  waitRoomContainer.style.display = "none";
-  callRoom.style.display = "flex";
-  screenStreamContainer.appendChild(myVideo);
-  if (myPeerConnection && videoStream) {
-    trackevent = 2;
-    myPeerConnection.addTrack(videoStream.getVideoTracks()[0], videoStream);
-    const offer = await myPeerConnection.createOffer();
-    await myPeerConnection.setLocalDescription(offer);
-    const offerData = {
-      offer,
-      trackevent
-    };
-    const offerDataString = JSON.stringify(offerData); // when sending data to the backend, it needs to be in string
-    socket.emit("send_media", offerDataString, roomName)
-  }
-}
-
-
-function showSharingRoom() {
-  wait.style.display = "none";
-  loginRoom.style.display = "none";
-  waitRoom.style.display = "flex";
-}
-
-async function handleRoomSubmit(e) {
-  e.preventDefault();
-  //make connection to peer. using ice candidate. look at initCall for more detail
-  //setting nickname
-  const nicknameInput = loginRoom.querySelector("#nickname");
-  //entering chatting room
-  //const roomNameInput = loginRoom.querySelector("#roomName");
-  //socket.emit("enter_room", roomNameInput.value, showRoom);
-
-  //roomName = roomNameInput.value;
-  nickname = nicknameInput.value;
-  showSharingRoom();
-}
-
-async function initCall() {
-  makeConnection();
-}
-
-async function handleRoom(e) {
-  e.preventDefault();
-  await initCall();
-  const roomNameInput = modal.querySelector("#roomName");
-  console.log(roomNameInput);
-  if (roomNameInput.value === '') {
-    // Input is empty, show an error message or handle accordingly
-    console.log('Please enter a room name');
-  }
-  else {
-    socket.emit("set_nickname", nickname);
-    socket.emit("enter_room", roomNameInput.value, showRoom);
-    roomName = roomNameInput.value;
-  }
-}
-
-joinRoomButton.addEventListener('click', handleRoom);
-loginRoomForm.addEventListener("submit", handleRoomSubmit);
-
-// --------------------------- Socket Code ------------------------------------------
-
-//when entering room, my server.js  will emit welcome, and it will enter this socket. Welcome socket will make data channel, and opens up my dataChannel.
-socket.on("welcome", async () => {
-  myDataChannel = myPeerConnection.createDataChannel("chat");
-  myDataChannel.addEventListener("message", addMessage);
-  console.log(myDataChannel);
-
-  const offer = await myPeerConnection.createOffer();
-  myPeerConnection.setLocalDescription(offer);
-  socket.emit("send_offer", offer, roomName);
-});
-
-socket.on("receive_offer", async (offer) => {
-  myPeerConnection.addEventListener("datachannel", (e) => {
-    myDataChannel = e.channel;
-    console.log(myDataChannel);
-    myDataChannel.addEventListener("message", addMessage);
-  });
-  myPeerConnection.setRemoteDescription(offer);
-
-  // getMedia
-  const answer = await myPeerConnection.createAnswer();
-  myPeerConnection.setLocalDescription(answer);
-  socket.emit("send_answer", answer, roomName);
-});
-
-socket.on("receive_answer", (answer) => {
-  myPeerConnection.setRemoteDescription(answer);
-});
-
-socket.on("receive_media", async (offerDataString) => {
-  myPeerConnection.addEventListener("datachannel", (e) => {
-    myDataChannel = e.channel;
-    myDataChannel.addEventListener("message", addMessage);
-  });
-
-  //this is getting the offerdata from the media handling section. Since I got two datas, event and trackevent, my frontend should be able to parse these two data.
-  const offerData = JSON.parse(offerDataString);
-  const offer = offerData.offer;
-  trackevent = offerData.trackevent;
-
-  myPeerConnection.setRemoteDescription(offer);
-  // getMedia
-  const answer = await myPeerConnection.createAnswer();
-  myPeerConnection.setLocalDescription(answer);
-  socket.emit("send_answer", answer, roomName);
-});
-
-socket.on("receive_ice", (ice) => {
-  myPeerConnection.addIceCandidate(ice);
-});
-
-socket.on("participant_count", (participantCount) => {
-  console.log(participantCount);
-  if(participantCount === 1){
-    myVideo.style.width = "90vw";  // Set the desired width
-    myVideo.style.height = "75vh";
-    myVideo.style.top = "120px";        // Set the desired top position
-    myVideo.style.borderRadius = "10px";
-    peerVideo.style.display = "none";
-  }
-  else if(participantCount === 2){
-    myVideo.style.width = "40vw";  // Set the desired width
-    myVideo.style.height = "75vh";
-    myVideo.style.top = "120px";        // Set the desired top position
-    myVideo.style.borderRadius = "10px";
-    peerVideo.style.display = "flex";
-  }
-
-})
-
-// --------------------------------------- RTC Code -------------------------------------------
-
-function handleIce(data) {
-  console.log(data);
-  socket.emit("send_ice", data.candidate, roomName);
-}
-
-function handleAddTrack(event) {
-  //Because trackevent value has changed when sending and receiving sockets, when handling add track, my program knows the changed value of
-  //trackevent. Thus, my web will be able to know where to put the video.
-  //This coding all happened because screen sharing and video sharing track event kind is all video. If it was different I could have used
-  //if function so that if track event is video put peerVideo, and use else functon if other track event kind came in. But there was no other way
-  //to differeniate these two kinds. So I made trackevent variables and used it as a flag.
-  if (trackevent === 1) {
-    peerStream = new MediaStream([event.track]);
-    peerScreen.srcObject = peerStream;
-  }
-  else {
-    peerStream = new MediaStream([event.track]);
-    peerVideo.srcObject = peerStream;
-  }
-}
-
-function makeConnection() {
-  // Define STUN and TURN server configurations
-  myPeerConnection = new RTCPeerConnection({
-    iceServers: [
-      {
-        urls: "stun:stun.relay.metered.ca:80",
-      },
-      {
-        urls: "turn:a.relay.metered.ca:80",
-        username: "dbea1dda7e80fffd5e3810d5",
-        credential: "TmKDa1kTOtEcN/BG",
-      },
-      {
-        urls: "turn:a.relay.metered.ca:80?transport=tcp",
-        username: "dbea1dda7e80fffd5e3810d5",
-        credential: "TmKDa1kTOtEcN/BG",
-      },
-      {
-        urls: "turn:a.relay.metered.ca:443",
-        username: "dbea1dda7e80fffd5e3810d5",
-        credential: "TmKDa1kTOtEcN/BG",
-      },
-      {
-        urls: "turn:a.relay.metered.ca:443?transport=tcp",
-        username: "dbea1dda7e80fffd5e3810d5",
-        credential: "TmKDa1kTOtEcN/BG",
-      },
-    ],
-  });
-  //add ice candiate. Make connection between two peers
-  myPeerConnection.addEventListener("icecandidate", handleIce);
-  //add track to stream my videos and screens
-  myPeerConnection.addEventListener("track", handleAddTrack);
-}
-
-// ----------------------------------- Chatting Area ---------------------------------------------------
-
-function addMessage(e) {
-  const li = document.createElement("li");
-  li.innerHTML = e.data;
-  messages.append(li);
-}
-
-function addMyMessage(e) {
-  const li = document.createElement("li");
-  li.innerHTML = e.data;
-  li.style.background = "#D3C9B5";
-  messages.append(li);
-}
-
-function handleChatSubmit(e) {
-  e.preventDefault();
-  const input = chatForm.querySelector("input");
-  if (myDataChannel != null) {
-    myDataChannel.send(`${nickname}: ${input.value}`);
-  }
-  addMyMessage({ data: `You: ${input.value}` });
-  input.value = "";
-  scrollToBottom();
-}
-
-chatForm.addEventListener("submit", handleChatSubmit);
-
-
-
-joinButton.addEventListener('click', () => {
-  modal.style.display = 'block';
-});
-
-closeButton.addEventListener('click', () => {
-  const room = modalContent.querySelector('#roomName');
-  modal.style.display = 'none';
-  room.value = "";
-  room.placeholder = "회의 ID 혹은 초대 링크";
-});
-
-
-modal.addEventListener('click', function (event) {
-  // Check if the clicked element is the modal itself (or its content)
-  if (event.target === modal || event.target === modalContent) {
-    // Clicking inside the modal should not do anything
-    event.preventDefault();
-    event.stopPropagation();
-  }
-});
-
-homeButton.addEventListener('click', () => {
-  window.location.href = 'http://localhost:3000/'; // Replace with your actual home page URL
-});

@@ -13,6 +13,7 @@ app.use((req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
   next();
 });
+
 app.use((req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
   next();
@@ -53,6 +54,11 @@ wsServer.on("connection", (socket) => {
   });
   socket.on("send_media", (offer, roomName) => {
     socket.to(roomName).emit("receive_media", offer);
+
+  });
+
+  socket.on("send_event", (trackevent, roomName) => {
+    socket.to(roomName).emit("receive_event", trackevent);
 
   });
 

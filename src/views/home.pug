@@ -46,22 +46,28 @@ html(lang="en")
 
         div#callRoom
             div#header
+                button#callPeople 💀 1 
+                button#disconnect 📞
             div#screenStream 
                 //- button#audio Mute
                 //- select#cameraSelect 
+                video#myScreen(autoplay, playinline, width="300", height="300")
+                canvas#myCanvas
             div#peerStream
-                //-video#peerScreen(autoplay, playinline, width="300", height="300")
-                video#peerVideo(autoplay, playinline, width = "640", height = "640")
+                video#peerVideo(autoplay, playinline, width = "640", height = "640")  
+                video#peerScreen(autoplay, playinline, width="300", height="300")   
             div#footer
-            
-                button#video1 🖵
+                button#callDisplay  💻 
+                button#callVideo 🖵
+                button#callAudio 🔇
+                button#callChat  💬
             div#chatContainer
-            
+                button#closeChat X
                 ul#messages 
                 form#chat
-                    button Send 
+                
                     input(type="text")
-
+                    button Send 
 
                 //- div#videoCall
                 //-     button#video 카메라
@@ -75,5 +81,5 @@ html(lang="en")
                 //-         video#peerVideo(autoplay, playinline, width = "640", height = "640")
                 
         script(src="/socket.io/socket.io.js") 
-        script(src="/public/js/app.js") 
+        script(type="module" src="/public/js/main.js") 
         script(src = "https://docs.opencv.org/master/opencv.js")
