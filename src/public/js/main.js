@@ -275,7 +275,6 @@ async function handleScreenClick() {
     myScreen.srcObject = null;
     myVideo.style.display = "flex";
     peerVideo.style.display = "flex";
-    trackevent = 3;
     screenBtn.innerText = "Turn screen on";
     handleScreenChange();
   }
@@ -326,7 +325,7 @@ async function handleCameraChange() {
 //same function as handleCameraChange()
 async function handleScreenChange() {
   if (!myPeerConnection) return;
-  trackevent = 1;
+  trackevent = 3;
   // Find existing screen video sender
   const screenVideoSender = myPeerConnection
     .getSenders()
@@ -564,6 +563,8 @@ function handleAddTrack(event) {
     peerVideo.srcObject = peerStream;
   }
   else if(trackevent === 3){
+    peerStream = new MediaStream([event.track]);
+    peerScreen.srcObject = peerStream;
     myVideo.style.display = "flex";
     peerVideo.style.display = "flex";
   }
