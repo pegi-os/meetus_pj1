@@ -516,3 +516,21 @@ footer{
   justify-content: center;
   align-items: center;
 }
+
+#myScreen {
+  position: absolute;
+  left: 100px;
+  top: 120px;
+  width: 90vw; /* 화면 너비의 100% */
+  height: 75vh; /* 화면 높이의 100% */
+  border-radius: 10px;
+}
+
+#peerScreen {
+  position: absolute;
+  left: 100px;
+  top: 120px;
+  width: 90vw; /* 화면 너비의 100% */
+  height: 75vh; /* 화면 높이의 100% */
+  border-radius: 10px;
+}
