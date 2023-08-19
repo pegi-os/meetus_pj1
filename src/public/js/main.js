@@ -35,9 +35,6 @@ const callPeople = document.getElementById('callPeople');
 const disconnectBtn = document.getElementById('disconnect');
 
 
-
-
-
 callChatBtn.addEventListener("click", () => {
   chatContainer.style.display = "block";
   console.log(chatContainer.style.display);
@@ -79,12 +76,13 @@ document.addEventListener("mouseup", () => {
 //callRoom is not shown until the user goes into the room
 waitRoom.style.display = "none";
 callRoom.style.display = "none";
+
 //cameraIconContainer.style.display = 'block';
 //variables that is used through out my frontend
 let videoStream;
 let screenStream;
 let muted = false;
-let screenoff = false;
+let screenoff = true;
 let cameraOff = false;
 let roomName;
 let nickname;
@@ -94,7 +92,6 @@ let trackevent;
 let peerStream;
 let previousFrame = null;
 let intervalId;
-let flagPeer = 0;
 
 // ------------------------function for when the user enterd the room----------------------------
 // Function to capture the current frame
@@ -141,6 +138,9 @@ async function getScreen() {
         height: { ideal: 970 }  // 원하는 세로 해상도 설정
       }
     });
+    screenoff = !screenoff;
+    myVideo.style.display = "none";
+    peerVideo.style.display = "none";
 
     myScreen.addEventListener('play', () => {
       intervalId = setInterval(() => {
@@ -261,31 +261,17 @@ async function handleCameraClick() {
 
 //function for when the user clicked the screen button, the web will process so that the user's screen sharing will be off or on.
 async function handleScreenClick() {
-  if (!screenStream) {
-    screenBtn.innerText = "Turn screen off";
-    getScreen().then(() => {
-      myVideo.style.display = "none";
-      peerVideo.style.display = "none";
-    });
-    return;
-  }
-
   if (!screenoff) {
     screenStream.getTracks().forEach((track) => track.stop());
     myScreen.srcObject = null;
     myVideo.style.display = "flex";
     peerVideo.style.display = "flex";
-    screenBtn.innerText = "Turn screen on";
+    screenoff = !screenoff;
     handleScreenChange();
   }
   else if (screenoff) {
-    getScreen().then(() => {
-      myVideo.style.display = "none";
-      peerVideo.style.display = "none";
-    });
-    screenBtn.innerText = "Turn screen off";
+    getScreen();
   }
-  screenoff = !screenoff;
 }
 
 //function for when the user clicked the camera on and off button, the peer should know that and turn the video sharing off.
@@ -351,7 +337,7 @@ async function handleScreenChange() {
   };
   const offerDataString = JSON.stringify(offerData);
   socket.emit("send_media", offerDataString, roomName);
-  
+
   clearInterval(intervalId);
 }
 
@@ -470,7 +456,7 @@ socket.on("receive_offer", async (offer) => {
     myDataChannel.addEventListener("message", addMessage);
   });
   myPeerConnection.setRemoteDescription(offer);
-  
+
   // getMedia
   const answer = await myPeerConnection.createAnswer();
   myPeerConnection.setLocalDescription(answer);
@@ -498,19 +484,19 @@ socket.on("receive_media", async (offerDataString) => {
   socket.emit("send_answer", answer, roomName);
 });
 
-  socket.on("receive_event", async (event) => {
-    myPeerConnection.addEventListener("datachannel", (e) => {
-      myDataChannel = e.channel;
-      myDataChannel.addEventListener("message", addMessage);
-    });
-    console.log("event", event);
-    if(event === 1){
-      disconnectBtn.hidden = true;
-    }
-    else if (event === 3) {
-      disconnectBtn.hidden = false;
-    }
+socket.on("receive_event", async (event) => {
+  myPeerConnection.addEventListener("datachannel", (e) => {
+    myDataChannel = e.channel;
+    myDataChannel.addEventListener("message", addMessage);
   });
+  console.log("event", event);
+  if (event === 1) {
+    disconnectBtn.hidden = true;
+  }
+  else if (event === 3) {
+    disconnectBtn.hidden = false;
+  }
+});
 
 
 socket.on("receive_ice", (ice) => {
@@ -562,7 +548,7 @@ function handleAddTrack(event) {
     peerStream = new MediaStream([event.track]);
     peerVideo.srcObject = peerStream;
   }
-  else if(trackevent === 3){
+  else if (trackevent === 3) {
     peerStream = new MediaStream([event.track]);
     peerScreen.srcObject = peerStream;
     myVideo.style.display = "flex";
