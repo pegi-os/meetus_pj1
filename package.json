@@ -4,9 +4,7 @@
   "description": "Meetus Clone using WebRTC and Websockets",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon"  ,
-    "predeploy": "npm run dev",
-    "deploy": "gh-pages -d build"
+    "dev": "nodemon" 
   },
   "devDependencies": {
     "@babel/cli": "^7.22.10",
