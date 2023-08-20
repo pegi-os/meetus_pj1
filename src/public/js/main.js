@@ -88,7 +88,7 @@ let roomName;
 let nickname;
 let myPeerConnection;
 let myDataChannel;
-let trackevent;
+let trackevent = 2;
 let peerStream;
 let previousFrame = null;
 let intervalId;
@@ -111,6 +111,7 @@ async function getVideo() {
     myVideo.srcObject = videoStream;
     console.log(videoStream);
     if (myPeerConnection) {
+      console.log("ehck");
       myPeerConnection.addTrack(videoStream.getVideoTracks()[0], videoStream);
       const offer = await myPeerConnection.createOffer();
       await myPeerConnection.setLocalDescription(offer);
@@ -378,18 +379,8 @@ async function showRoom() {
   waitRoomContainer.style.display = "none";
   callRoom.style.display = "flex";
   screenStreamContainer.appendChild(myVideo);
-  if (myPeerConnection && videoStream) {
-    trackevent = 2;
-    myPeerConnection.addTrack(videoStream.getVideoTracks()[0], videoStream);
-    const offer = await myPeerConnection.createOffer();
-    await myPeerConnection.setLocalDescription(offer);
-    const offerData = {
-      offer,
-      trackevent
-    };
-    const offerDataString = JSON.stringify(offerData); // when sending data to the backend, it needs to be in string
-    socket.emit("send_media", offerDataString, roomName)
-  }
+  
+  
 }
 
 
@@ -422,6 +413,18 @@ async function handleRoom(e) {
   await initCall();
   const roomNameInput = modal.querySelector("#roomName");
   console.log(roomNameInput);
+  if (videoStream) {
+    console.log("hi");
+    myPeerConnection.addTrack(videoStream.getVideoTracks()[0], videoStream);
+    const offer = myPeerConnection.createOffer();
+    myPeerConnection.setLocalDescription(offer);
+    const offerData = {
+      offer,
+      trackevent
+    };
+    const offerDataString = JSON.stringify(offerData); // when sending data to the backend, it needs to be in string
+    socket.emit("send_media", offerDataString, roomName)
+  }
   if (roomNameInput.value === '') {
     // Input is empty, show an error message or handle accordingly
     console.log('Please enter a room name');
@@ -442,7 +445,6 @@ loginRoomForm.addEventListener("submit", handleRoomSubmit);
 socket.on("welcome", async () => {
   myDataChannel = myPeerConnection.createDataChannel("chat");
   myDataChannel.addEventListener("message", addMessage);
-  console.log(myDataChannel);
 
   const offer = await myPeerConnection.createOffer();
   myPeerConnection.setLocalDescription(offer);
@@ -489,18 +491,12 @@ socket.on("receive_event", async (event) => {
     myDataChannel = e.channel;
     myDataChannel.addEventListener("message", addMessage);
   });
-  console.log("event", event);
-  if (event === 1) {
-    disconnectBtn.hidden = true;
-  }
-  else if (event === 3) {
-    disconnectBtn.hidden = false;
-  }
 });
 
 
 socket.on("receive_ice", (ice) => {
   myPeerConnection.addIceCandidate(ice);
+
 });
 
 socket.on("participant_count", (participantCount) => {
@@ -520,6 +516,7 @@ socket.on("participant_count", (participantCount) => {
     myVideo.style.borderRadius = "10px";
     peerVideo.style.display = "flex";
     callPeople.innerText = "💀 2";
+    
   }
 
 })
@@ -537,7 +534,7 @@ function handleAddTrack(event) {
   //This coding all happened because screen sharing and video sharing track event kind is all video. If it was different I could have used
   //if function so that if track event is video put peerVideo, and use else functon if other track event kind came in. But there was no other way
   //to differeniate these two kinds. So I made trackevent variables and used it as a flag.
-  console.log(trackevent);
+  console.log("trackevent", trackevent);
   if (trackevent === 1) {
     peerStream = new MediaStream([event.track]);
     peerScreen.srcObject = peerStream;
@@ -545,6 +542,7 @@ function handleAddTrack(event) {
     peerVideo.style.display = "none";
   }
   else if (trackevent === 2) {
+    console.log("wihy");
     peerStream = new MediaStream([event.track]);
     peerVideo.srcObject = peerStream;
   }
