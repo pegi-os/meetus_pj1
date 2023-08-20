@@ -4,10 +4,9 @@
   "description": "Meetus Clone using WebRTC and Websockets",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon"  ,
-    "predeploy": "npm run dev",
-    "deploy": "gh-pages -d build"
+    "dev": "nodemon"
   },
+
   "devDependencies": {
     "@babel/cli": "^7.22.10",
     "@babel/core": "^7.22.10",
@@ -22,8 +21,6 @@
     "pug": "^3.0.2",
     "socket.io": "^4.7.2",
     "ws": "^8.13.0"
-  },
-
-  "homepage" : "https://pegi-os.github.io/meetus_pj1/"
+  }
  }
 
