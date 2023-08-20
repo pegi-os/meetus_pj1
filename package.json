@@ -20,8 +20,6 @@
     "pug": "^3.0.2",
     "socket.io": "^4.7.2",
     "ws": "^8.13.0"
-  },
-
-  "homepage" : "https://pegi-os.github.io/meetus_pj1/"
+  }
  }
 
