@@ -40,6 +40,8 @@ jobs:
           path: '.'
       - name: Setup Node.js environment
         uses: actions/setup-node@v3.8.1
+      - name: install nodemon
+        run: npm install nodemon
       - name: run dev
         run: npm run dev
 
