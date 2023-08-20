@@ -33,6 +33,9 @@ footer{
   height: 100vh; /* 화면 높이의 100% */
   margin: auto;
 }
+#waitRoom{
+  display: none;
+}
 
 #myVideo {
   position: absolute;
