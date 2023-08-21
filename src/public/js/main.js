@@ -546,7 +546,8 @@ socket.on("participant_count", (participantCount) => {
   else if (participantCount === 2) {
     myVideo.style.width = "40vw";  // Set the desired width
     myVideo.style.height = "75vh";
-    myVideo.style.top = "10vh";        // Set the desired top position
+    myVideo.style.top = "10vh";
+    myVideo.style.left = "5vw";         // Set the desired top position
     myVideo.style.borderRadius = "10px";
     peerVideo.style.display = "flex";
     callPeople.innerText = "💀 2";

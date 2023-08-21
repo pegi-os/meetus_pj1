@@ -233,8 +233,8 @@ body{
 
 #peerVideo{
   position: absolute;
-  margin-top: 120px;
-  margin-left: 250px;
+  margin-top: 10vh;
+  margin-left: 17vw;
   height: 75vh;
   width: 40vw;
   background-color: #5d5d5d;
