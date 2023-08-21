@@ -42,8 +42,6 @@ html(lang="en")
                         input(id="roomName", placeholder="회의 ID 혹은 초대 링크", required, type="text")
                         button.close(type="button") 취소
                         button#joinRoomButton 확인
-                        
-
         div#callRoom
             div#header
                 button#callPeople 💀 1 
@@ -57,7 +55,8 @@ html(lang="en")
                 video#peerVideo(autoplay, playinline, width = "640", height = "640")  
                 video#peerScreen(autoplay, playinline, width="300", height="300")   
             div#footer
-                button#callDisplay  💻 
+                button#callDisplay  💻
+                button#callAitranslate trans 
                 button#callVideo 🖵
                 button#callAudio 🔇
                 button#callChat  💬

@@ -15,17 +15,8 @@ h1 {
 
 body{
   overflow: hidden;
-  resize: none;
 }
 
-header{
-  position: flex;
-  padding: 0;
-}
-
-footer{
-  position: flex;
-}
 
 #waitRoom-container {
   position: relative; /* 부모 요소를 상대적 위치로 설정 */
@@ -39,7 +30,7 @@ footer{
 
 #myVideo {
   position: absolute;
-  left: 100px;
+  left: 5%;
   width: 95vw; /* 화면 너비의 100% */
   height: 100vh; /* 화면 높이의 100% */
   background-color: #5d5d5d;
@@ -55,9 +46,9 @@ footer{
   border: none;
   cursor: pointer;
   border-radius: 100px;
-  height: 50px;
-  width: 100px;
-  font-size: 30px;
+  width: 6vw;
+  height: 6vh;
+  font-size: 2vw;  
   display: flex;
   justify-content: center;
   align-items: center;
@@ -75,9 +66,9 @@ footer{
   border: none;
   cursor: pointer;
   border-radius: 100px;
-  height: 50px;
-  width: 100px;
-  font-size: 30px;
+  width: 6vw;
+  height: 6vh;
+  font-size: 2vw;   
   display: flex;
   justify-content: center;
   align-items: center;
@@ -92,31 +83,32 @@ footer{
   background-color: #007bff;
   color: white;
   border: none;
-  padding: 10px 20px;
   cursor: pointer;
   border-radius: 100px;
-  width: 150px;
-  height: 75px;
-  font-size: 20px;  
+  width: 7vw;
+  height: 6vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1vw;  
 }
 
 #settings{
   width: 100vw; /* 화면 너비의 100% */
   height: 100vh; /* 화면 높이의 100% */
   background-color: black; /* 박스의 배경 색상 */
-  position: absolute;
+  position: relative;
 }
 
 #home {
-  margin-left: 10px;
-  margin-top: 40px;
+  margin-left: 0.7vw;
   border: none;
   border-radius: 50%;
-  width: 60px; /* 버튼의 너비를 조정 */
-  height: 60px; /* 버튼의 높이를 조정 */
+  width: 3vw; /* 버튼의 너비를 조정 */
+  height: 6vh; /* 버튼의 높이를 조정 */
   background-color: #323232;
   color: #fff;
-  font-size: 25px; /* 글자 크기를 조정 */
+  font-size: 2vw; /* 글자 크기를 조정 */
   cursor: pointer;
   display: flex; /* 텍스트를 가운데로 정렬하기 위해 Flexbox 사용 */
   justify-content: center; /* 수평으로 가운데 정렬 */
@@ -124,15 +116,15 @@ footer{
 }
 
 #person {
-  margin-left: 10px;
-  margin-top: 40px;
+  margin-left: 0.7vw;
+    margin-top: 2vh;
   border: none;
   border-radius: 50%;
-  width: 60px; /* 버튼의 너비를 조정 */
-  height: 60px; /* 버튼의 높이를 조정 */
+  width: 3vw; /* 버튼의 너비를 조정 */
+  height: 6vh; /* 버튼의 높이를 조정 */
   background-color: #323232;
   color: #fff;
-  font-size: 25px; /* 글자 크기를 조정 */
+  font-size: 2vw; /* 글자 크기를 조정 */
   cursor: pointer;
   display: flex; /* 텍스트를 가운데로 정렬하기 위해 Flexbox 사용 */
   justify-content: center; /* 수평으로 가운데 정렬 */
@@ -140,15 +132,15 @@ footer{
 }
 
 #clock {
-  margin-left: 10px;
-  margin-top: 40px;
+  margin-left: 0.7vw;
+  margin-top: 2vh;
   border: none;
   border-radius: 50%;
-  width: 60px; /* 버튼의 너비를 조정 */
-  height: 60px; /* 버튼의 높이를 조정 */
+  width: 3vw; /* 버튼의 너비를 조정 */
+  height: 6vh; /* 버튼의 높이를 조정 */
   background-color: #323232;
   color: #fff;
-  font-size: 25px; /* 글자 크기를 조정 */
+  font-size: 2vw; /* 글자 크기를 조정 */
   cursor: pointer;
   display: flex; /* 텍스트를 가운데로 정렬하기 위해 Flexbox 사용 */
   justify-content: center; /* 수평으로 가운데 정렬 */
@@ -156,19 +148,20 @@ footer{
 }
 
 #setting {
-  margin-left: 10px;
-  margin-top: 40px;
+  margin-left: 0.7vw;
+  margin-top: 2vh;
   border: none;
   border-radius: 50%;
-  width: 60px; /* 버튼의 너비를 조정 */
-  height: 60px; /* 버튼의 높이를 조정 */
+  width: 3vw; /* 버튼의 너비를 조정 */
+  height: 6vh; /* 버튼의 높이를 조정 */
   background-color: #323232;
   color: #fff;
-  font-size: 25px; /* 글자 크기를 조정 */
+  font-size: 2vw; /* 글자 크기를 조정 */
   cursor: pointer;
   display: flex; /* 텍스트를 가운데로 정렬하기 위해 Flexbox 사용 */
   justify-content: center; /* 수평으로 가운데 정렬 */
   align-items: center; /* 수직으로 가운데 정렬 */
+  aspect-ratio: 3 / 6;
 }
 
 #userScreen{
@@ -217,9 +210,7 @@ footer{
   background-color: #007bff;
   color: white;
   border: none;
-  padding: 10px 20px;
   cursor: pointer;
-  border-radius: 10px;
   width: 110px;
   height: 60px;
   font-size: 20px;
@@ -308,16 +299,6 @@ footer{
 }
 
 
-#screen {
-  margin-left: 150px;
-  font-size: 5px;
-  width: 125px;
-  line-height: 0px;
-  position: absolute;
-  z-index: 2;
-  border-radius: 30px;
-}
-
 #peerStream {
   padding-left: 700px;
   position: absolute;
@@ -385,7 +366,7 @@ footer{
 
 #header {
   width: 100vw;
-  height: 10vh;
+  height: 8vh;
   position: absolute;
   background-color: #1a1a1a;
   padding-left: 100px;
@@ -394,9 +375,9 @@ footer{
 }
 
 #footer {
-  margin-top: 860px;
+  margin-top: 47vw;
   width: 100vw;
-  height: 100vh;
+  height: 10vh;
   position: absolute;
   background-color: #202124;
   padding-left: 100px;
@@ -405,24 +386,17 @@ footer{
   flex-direction: column;
 }
 
-#buttonPos {
-  position: relative;
-  margin-top: 1090px;
-  margin-left: 1000px;
-  z-index: 10;
-}
 
 #callVideo {
-  margin-top: 15px;
-  margin-left: 870px;
+  left: 50vw;
   background-color: #323232;
   color: white;
   border: none;
   cursor: pointer;
   border-radius: 100px;
-  height: 50px;
-  width: 100px;
-  font-size: 30px;
+  height: 6vh;
+  width: 5vw;
+  font-size: 2vw;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -433,17 +407,16 @@ footer{
 }
 
 #callAudio {
-  margin-top: 15px;
-  margin-left: 670px;
+  left: 40vw;
   position: absolute;
   background-color: #323232;
   color: white;
   border: none;
   cursor: pointer;
   border-radius: 100px;
-  height: 50px;
-  width: 100px;
-  font-size: 30px;
+  height: 6vh;
+  width: 5vw;
+  font-size: 2vw;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -454,17 +427,37 @@ footer{
 
 #callDisplay {
   /* left:5; */
-  margin-right: 200px;
-  margin-top: 15px;
+  left: 5vw;
   position: absolute;
   background-color: #323232;
   color: white;
   border: none;
   cursor: pointer;
   border-radius: 100px;
-  height: 50px;
-  width: 100px;
-  font-size: 30px;
+  height: 6vh;
+  width: 5vw;
+  font-size: 2vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  line-height: 0;
+  pointer-events: all;
+  z-index: 10;
+}
+
+
+#callAitranslate {
+  /* left:5; */
+  left: 15vw;
+  position: absolute;
+  background-color: #323232;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 100px;
+  width: 6vw;
+  height: 6vh;
+  font-size: 2vw;   
   display: flex;
   justify-content: center;
   align-items: center;
@@ -474,17 +467,16 @@ footer{
 }
 
 #callChat{
-  margin-left: 1570px;
-  margin-top: 15px;
+  left: 89vw;
   position: absolute;
   background-color: #323232;
   color: white;
   border: none;
   cursor: pointer;
   border-radius: 100px;
-  height: 50px;
-  width: 100px;
-  font-size: 30px;
+  width: 6vw;
+  height: 6vh;
+  font-size: 2vw;   
   display: flex;
   justify-content: center;
   align-items: center;
@@ -494,30 +486,44 @@ footer{
 }
 
 #callPeople {
-  display: absolute;
-  font-size: 18px;
-  margin-top: 25px;
+  left:5vw;
+  top: 0.1vh;
+  position: absolute;
   background-color: #323232;
+  color: white;
+  border: none;
+  cursor: pointer;
   border-radius: 100px;
-  height: 50px;
-  width: 109px;
-  line-height: 0;
+  width: 6vw;
+  height: 6vh;
+  font-size: 1vw;   
+  display: flex;
   justify-content: center;
   align-items: center;
+  padding: 0 10px; /* 좌우 여백을 20px로 설정 */
+  line-height: 1;
+  pointer-events: all;
+  z-index: 10;
 }
 
 #disconnect {
-  display: absolute;
-  font-size: 20px;
-  margin-top: 25px;
-  margin-left: 1450px;
+  left: 89vw;
+  top: 0.1vh;
+  position: absolute;
   background-color: #323232;
+  color: white;
+  border: none;
+  cursor: pointer;
   border-radius: 100px;
-  height: 50px;
-  width: 109px;
-  line-height: 0;
+  width: 6vw;
+  height: 6vh;
+  font-size: 1.5vw;   
+  display: flex;
   justify-content: center;
   align-items: center;
+  line-height: 0;
+  pointer-events: all;
+  z-index: 10;
 }
 
 #myScreen {

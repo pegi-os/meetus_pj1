@@ -33,6 +33,8 @@ const callChatBtn = document.getElementById('callChat');
 const chatCloseBtn = document.getElementById('closeChat');
 const callPeople = document.getElementById('callPeople');
 const disconnectBtn = document.getElementById('disconnect');
+const aitranslateBtn = document.getElementById('callAitranslate');
+
 
 
 callChatBtn.addEventListener("click", () => {
@@ -95,6 +97,34 @@ let intervalId;
 
 // ------------------------function for when the user enterd the room----------------------------
 // Function to capture the current frame
+aitranslateBtn.addEventListener("click", captureScreen);
+
+function captureScreen() {
+  // Canvas 요소 생성
+  if (screenStream) {
+    const canvas = document.createElement("canvas");
+    canvas.width = myScreen.width;
+    canvas.height = myScreen.height;
+    const context = canvas.getContext("2d");
+
+    // Canvas에 스트림 이미지 데이터를 그림
+    context.drawImage(myScreen, 0, 0, canvas.width, canvas.height);
+
+    // 캔버스 이미지 데이터를 이미지 URL로 변환
+    const imageDataUrl = canvas.toDataURL("image/png");
+
+    canvas.toBlob(function (blob) {
+      // Blob 객체를 생성한 뒤에 다운로드 링크를 생성하여 클릭하면 다운로드됨
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "screenshot.png"; // 파일명 설정
+      link.click();
+      console.log(link);
+    }, "image/png"); // 이미지 타입 지정
+  };
+} 
+  
+
 
 //function for sharing video
 async function getVideo() {
@@ -379,8 +409,8 @@ async function showRoom() {
   waitRoomContainer.style.display = "none";
   callRoom.style.display = "flex";
   screenStreamContainer.appendChild(myVideo);
-  
-  
+
+
 }
 
 
@@ -504,7 +534,8 @@ socket.on("participant_count", (participantCount) => {
   if (participantCount === 1) {
     myVideo.style.width = "90vw";  // Set the desired width
     myVideo.style.height = "75vh";
-    myVideo.style.top = "120px";        // Set the desired top position
+    myVideo.style.top = "10vh"; // 화면 높이의 10% 위치에 위치
+    myVideo.style.left = "5vw"; // 화면 너비의 20% 위치에 위치
     myVideo.style.borderRadius = "10px";
     peerVideo.style.display = "none";
     callPeople.innerText = "💀 1";
@@ -516,7 +547,7 @@ socket.on("participant_count", (participantCount) => {
     myVideo.style.borderRadius = "10px";
     peerVideo.style.display = "flex";
     callPeople.innerText = "💀 2";
-    
+
   }
 
 })
