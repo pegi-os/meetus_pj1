@@ -94,35 +94,29 @@ let trackevent = 2;
 let peerStream;
 let previousFrame = null;
 let intervalId;
+let participant
 
 // ------------------------function for when the user enterd the room----------------------------
 // Function to capture the current frame
 aitranslateBtn.addEventListener("click", captureScreen);
 
 function captureScreen() {
-  // Canvas 요소 생성
   if (screenStream) {
     const canvas = document.createElement("canvas");
     canvas.width = myScreen.width;
     canvas.height = myScreen.height;
     const context = canvas.getContext("2d");
 
-    // Canvas에 스트림 이미지 데이터를 그림
+   
     context.drawImage(myScreen, 0, 0, canvas.width, canvas.height);
 
-    // 캔버스 이미지 데이터를 이미지 URL로 변환
+
     const imageDataUrl = canvas.toDataURL("image/png");
 
-    canvas.toBlob(function (blob) {
-      // Blob 객체를 생성한 뒤에 다운로드 링크를 생성하여 클릭하면 다운로드됨
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = "screenshot.png"; // 파일명 설정
-      link.click();
-      console.log(link);
-    }, "image/png"); // 이미지 타입 지정
-  };
-} 
+
+    console.log(imageDataUrl);
+  }
+}
   
 
 
@@ -295,8 +289,16 @@ async function handleScreenClick() {
   if (!screenoff) {
     screenStream.getTracks().forEach((track) => track.stop());
     myScreen.srcObject = null;
-    myVideo.style.display = "flex";
-    peerVideo.style.display = "flex";
+    if(participant === 1){
+      myVideo.style.display = "flex";
+    }
+    else if(participant === 2){
+      myVideo.style.display = "flex";
+      peerVideo.style.display = "flex";
+    }
+
+    
+    
     screenoff = !screenoff;
     handleScreenChange();
   }
@@ -531,6 +533,7 @@ socket.on("receive_ice", (ice) => {
 
 socket.on("participant_count", (participantCount) => {
   console.log(participantCount);
+  participant = participantCount;
   if (participantCount === 1) {
     myVideo.style.width = "90vw";  // Set the desired width
     myVideo.style.height = "75vh";
@@ -543,7 +546,7 @@ socket.on("participant_count", (participantCount) => {
   else if (participantCount === 2) {
     myVideo.style.width = "40vw";  // Set the desired width
     myVideo.style.height = "75vh";
-    myVideo.style.top = "120px";        // Set the desired top position
+    myVideo.style.top = "10vh";        // Set the desired top position
     myVideo.style.borderRadius = "10px";
     peerVideo.style.display = "flex";
     callPeople.innerText = "💀 2";
