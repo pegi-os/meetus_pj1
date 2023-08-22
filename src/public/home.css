@@ -104,7 +104,7 @@ body{
 #home {
   margin-left: 0.7vw;
   margin-right: 0.7vw;
-  margin-top: 2vh;
+  margin-top: 3vh;
   border: none;
   border-radius: 50%;
   width: 3vw; /* 버튼의 너비를 조정 */
@@ -120,7 +120,7 @@ body{
 
 #person {
   margin-left: 0.7vw;
-    margin-top: 2vh;
+    margin-top: 3vh;
   border: none;
   border-radius: 50%;
   width: 3vw; /* 버튼의 너비를 조정 */
@@ -136,7 +136,7 @@ body{
 
 #clock {
   margin-left: 0.7vw;
-  margin-top: 2vh;
+  margin-top: 3vh;
   border: none;
   border-radius: 50%;
   width: 3vw; /* 버튼의 너비를 조정 */
@@ -152,7 +152,7 @@ body{
 
 #setting {
   margin-left: 0.7vw;
-  margin-top: 2vh;
+  margin-top: 3vh;
   border: none;
   border-radius: 50%;
   width: 3vw; /* 버튼의 너비를 조정 */

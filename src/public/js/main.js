@@ -561,7 +561,10 @@ socket.on("participant_count", (participantCount) => {
   imgElement.src = "/public/image/human.png";
   const numberElement = document.createElement("span");
   numberElement.style.whiteSpace = "pre";
-  numberElement.textContent ="  2"; // 추가할 숫자 설정
+  numberElement.textContent ="  " + participantCount; // 추가할 숫자 설정
+  callPeople.innerText = "";
+  callPeople.appendChild(imgElement);
+  callPeople.appendChild(numberElement);
   participant = participantCount;
   if (participantCount === 1) {
     myVideo.style.width = "90vw";  // Set the desired width
@@ -579,9 +582,6 @@ socket.on("participant_count", (participantCount) => {
     myVideo.style.left = "5vw";         // Set the desired top position
     myVideo.style.borderRadius = "10px";
     peerVideo.style.display = "flex";
-    callPeople.innerText = "";
-    callPeople.appendChild(imgElement);
-    callPeople.appendChild(numberElement);
   }
 
 })
