@@ -85,7 +85,7 @@ let videoStream;
 let screenStream;
 let muted = false;
 let screenoff = true;
-let cameraOff = false;
+let cameraOff = true;
 let roomName;
 let nickname;
 let myPeerConnection;
@@ -107,7 +107,7 @@ function captureScreen() {
     canvas.height = myScreen.height;
     const context = canvas.getContext("2d");
 
-   
+
     context.drawImage(myScreen, 0, 0, canvas.width, canvas.height);
 
 
@@ -117,7 +117,7 @@ function captureScreen() {
     console.log(imageDataUrl);
   }
 }
-  
+
 
 
 //function for sharing video
@@ -249,13 +249,27 @@ function handleAudioClick() {
   videoStream
     .getAudioTracks()
     .forEach((track) => (track.enabled = !track.enabled));
+  const imgElement = document.createElement("img");
+  imgElement.width = "40";
+  imgElement.height = "40";
+  const callImgElement = document.createElement("img");
+  callImgElement.width = "40";
+  callImgElement.height = "30";
 
   if (!muted) {
-    audioBtn.innerText = "🔊";
-    callAudioBtn.innerText = "🔊";
+    imgElement.src = "/public/image/speaker.png";
+    callImgElement.src = "/public/image/speaker.png";
+    audioBtn.innerText = "";
+    audioBtn.appendChild(imgElement);
+    callAudioBtn.innerText = "";
+    callAudioBtn.appendChild(callImgElement);
   } else {
-    audioBtn.innerText = "🔇";
-    callAudioBtn.innerText = "🔇";
+    imgElement.src = "/public/image/mute.png";
+    callImgElement.src = "/public/image/mute.png";
+    audioBtn.innerText = "";
+    audioBtn.appendChild(imgElement);
+    callAudioBtn.innerText = "";
+    callAudioBtn.appendChild(callImgElement);
   }
   muted = !muted;
 }
@@ -263,22 +277,31 @@ function handleAudioClick() {
 //function for when the user clicked the camera button, the web will process so that the user's video sharing will be off or on.
 async function handleCameraClick() {
   // When opening up the camera sharing for the first time, the app must first get the video.
-  if (!videoStream) {
-    videoBtn.innerText = "❌";
-    callVideoBtn.innerText = "❌";
-    await getVideo();
-    return;
-  }
+  const imgElement = document.createElement("img");
+  imgElement.width = "40";
+  imgElement.height = "40";
+  const callImgElement = document.createElement("img");
+  callImgElement.width = "40";
+  callImgElement.height = "30";
+
   if (!cameraOff) {
     videoStream.getTracks().forEach((track) => track.stop());
     myVideo.srcObject = null;
-    videoBtn.innerText = "🖵";
-    callVideoBtn.innerText = "🖵";
+    imgElement.src = "/public/image/cameraOff.png";
+    callImgElement.src = "/public/image/cameraOff.png";
+    videoBtn.innerText = "";
+    videoBtn.appendChild(imgElement);
+    callVideoBtn.innerText = "";
+    callVideoBtn.appendChild(callImgElement);
     handleCameraChange();
   } else {
     await getVideo();
-    videoBtn.innerText = "❌";
-    callVideoBtn.innerText = "❌";
+    imgElement.src = "/public/image/cameraOn.png";
+    callImgElement.src = "/public/image/cameraOn.png";
+    videoBtn.innerText = "";
+    videoBtn.appendChild(imgElement);
+    callVideoBtn.innerText = "";
+    callVideoBtn.appendChild(callImgElement);
 
   }
   cameraOff = !cameraOff;
@@ -289,16 +312,16 @@ async function handleScreenClick() {
   if (!screenoff) {
     screenStream.getTracks().forEach((track) => track.stop());
     myScreen.srcObject = null;
-    if(participant === 1){
+    if (participant === 1) {
       myVideo.style.display = "flex";
     }
-    else if(participant === 2){
+    else if (participant === 2) {
       myVideo.style.display = "flex";
       peerVideo.style.display = "flex";
     }
 
-    
-    
+
+
     screenoff = !screenoff;
     handleScreenChange();
   }
@@ -532,7 +555,13 @@ socket.on("receive_ice", (ice) => {
 });
 
 socket.on("participant_count", (participantCount) => {
-  console.log(participantCount);
+  const imgElement = document.createElement("img");
+  imgElement.width = "20";
+  imgElement.height = "20";
+  imgElement.src = "/public/image/human.png";
+  const numberElement = document.createElement("span");
+  numberElement.style.whiteSpace = "pre";
+  numberElement.textContent ="  2"; // 추가할 숫자 설정
   participant = participantCount;
   if (participantCount === 1) {
     myVideo.style.width = "90vw";  // Set the desired width
@@ -541,7 +570,7 @@ socket.on("participant_count", (participantCount) => {
     myVideo.style.left = "5vw"; // 화면 너비의 20% 위치에 위치
     myVideo.style.borderRadius = "10px";
     peerVideo.style.display = "none";
-    callPeople.innerText = "💀 1";
+
   }
   else if (participantCount === 2) {
     myVideo.style.width = "40vw";  // Set the desired width
@@ -550,8 +579,9 @@ socket.on("participant_count", (participantCount) => {
     myVideo.style.left = "5vw";         // Set the desired top position
     myVideo.style.borderRadius = "10px";
     peerVideo.style.display = "flex";
-    callPeople.innerText = "💀 2";
-
+    callPeople.innerText = "";
+    callPeople.appendChild(imgElement);
+    callPeople.appendChild(numberElement);
   }
 
 })

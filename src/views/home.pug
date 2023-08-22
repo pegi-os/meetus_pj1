@@ -24,14 +24,19 @@ html(lang="en")
         div#waitRoom-container.my-element
             div#waitRoom
                 div#settings
-                    button#home ⌂
-                    button#person ☺
-                    button#clock 📃
+                    button#home 
+                        img(src ="/public/image/home.png", width = "30px", height = "30px")
+                    button#person 
+                        img(src ="/public/image/human.png", width = "30px", height = "30px")
+                    button#clock 
+                        img(src ="/public/image/clock.png", width = "30px", height = "30px")
                     button#setting ⚙       
                 div#userScreen
                     video#myVideo(autoplay, playinline, width="1665", height="970")
-                    button#video 🖵
-                    button#audio 🔇
+                    button#video 
+                        img(src ="/public/image/cameraOff.png", width = "40px", height = "40px")
+                    button#audio 
+                        img(src ="/public/image/mute.png", width = "40px", height = "40px")
                     button#join-button 참여
                 div#roomModal.modal
                     .modal-content  
@@ -42,10 +47,13 @@ html(lang="en")
                         input(id="roomName", placeholder="회의 ID 혹은 초대 링크", required, type="text")
                         button.close(type="button") 취소
                         button#joinRoomButton 확인
-        div#callRoom
+        div#callRoom    
             div#header
-                button#callPeople 💀 1 
-                button#disconnect 📞
+                button#callPeople 
+                    img(src ="/public/image/human.png", width = "20px", height = "20px")
+                    | &nbsp 1 
+                button#disconnect 
+                    img(src ="/public/image/disconnect.png", width = "40px", height = "40px")
             div#screenStream 
                 //- button#audio Mute
                 //- select#cameraSelect 
@@ -55,30 +63,25 @@ html(lang="en")
                 video#peerVideo(autoplay, playinline, width = "640", height = "640")  
                 video#peerScreen(autoplay, playinline, width="300", height="300")   
             div#footer
-                button#callDisplay  💻
-                button#callAitranslate trans 
-                button#callVideo 🖵
-                button#callAudio 🔇
-                button#callChat  💬
+                button#callDisplay  
+                    img(src ="/public/image/screensharing.png", width = "30px", height = "20px")
+                    span(style="font-size: 13px; display: block") 화면 공유
+                button#callAitranslate 
+                     img(src ="/public/image/aiTranslate.png", width = "40px", height = "40px")
+                     span(style="font-size: 15px; display: block") AI Translate
+                button#callVideo 
+                    img(src ="/public/image/cameraOff.png", width = "40px", height = "30px")
+                button#callAudio 
+                    img(src ="/public/image/mute.png", width = "40px", height = "30px")
+                button#callChat  
+                    img(src ="/public/image/chat.png", width = "30px", height = "25px")
+                    span(style="font-size: 13px; display: block") 채팅
             div#chatContainer
                 button#closeChat X
                 ul#messages 
                 form#chat
-                
                     input(type="text")
                     button Send 
-
-                //- div#videoCall
-                //-     button#video 카메라
-                //-     button#screen 화면 공유
-                //-     div#screenStream
-                //-         video#myVideo(autoplay, playinline, width="650", height="650")
-                //-         button#audio Mute
-                //-         select#cameraSelect 
-                //-     div#peerStream
-                //-         //video#peerScreen(autoplay, playinline, width="300", height="300")
-                //-         video#peerVideo(autoplay, playinline, width = "640", height = "640")
-                
         script(src="/socket.io/socket.io.js") 
         script(type="module" src="/public/js/main.js") 
         script(src = "https://docs.opencv.org/master/opencv.js")
