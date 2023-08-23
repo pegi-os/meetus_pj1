@@ -34,8 +34,8 @@ const chatCloseBtn = document.getElementById('closeChat');
 const callPeople = document.getElementById('callPeople');
 const disconnectBtn = document.getElementById('disconnect');
 const aitranslateBtn = document.getElementById('callAitranslate');
-
-
+const boundingCanvas = document.getElementById('boundingCanvas');
+const context = boundingCanvas.getContext("2d");
 
 callChatBtn.addEventListener("click", () => {
   chatContainer.style.display = "block";
@@ -100,31 +100,29 @@ let participant
 // Function to capture the current frame
 aitranslateBtn.addEventListener("click", captureScreen);
 
+function drawText(text, x, y, font, color) {
+  context.fillStyle = color;
+  context.font = font;
+  context.fillText(text, x, y);
+}
+
+
 function captureScreen() {
   if (screenStream) {
-    const boundingCanvas = document.getElementById("boundingCanvas");
-    const videoTrack = screenStream.getVideoTracks()[0];
-    const videoSettings = videoTrack.getSettings(); // 비디오 트랙의 설정 가져오기
 
-    // 비디오 스트림의 너비와 높이를 가져와서 설정
-    boundingCanvas.style.width = `${myScreen.width}px`; // vw 단위 사용
-    boundingCanvas.style.height = `${myScreen.height}px`; // vh 단위 사용
+    // myScreen 요소의 너비와 높이를 가져와서 설정
+    const myScreenWidth = myScreen.offsetWidth;
+    const myScreenHeight = myScreen.offsetHeight;
+    boundingCanvas.style.width = `${myScreenWidth}px`;
+    boundingCanvas.style.height = `${myScreenHeight}px`;
     boundingCanvas.style.position = "absolute";
+    // myScreen 요소의 위치를 가져와서 설정
+    const myScreenRect = myScreen.getBoundingClientRect();
+    boundingCanvas.style.left = `${myScreenRect.left}px`;
+    boundingCanvas.style.top = `${myScreenRect.top}px`;
 
+    drawText("Hello, Canvas!", 100,150, "24px Arial", "blue");
 
-
-
-    const context = boundingCanvas.getContext("2d");
-    // 빨간색 사각형 그리기
-    const x1 = 20;
-    const y1 = 20;
-    const x2 = 80;
-    const y2 = 80;
-
- 
-    context.fillStyle = 'red';
-    context.fillRect(x1, y1, x2 - x1, y2 - y1);
-    boundingCanvas.style.display = "flex";
   }
 }
 
@@ -230,6 +228,7 @@ function processVideoFrame() {
     const averageDiff = totalDiff / (currentFrame.length / 4);
 
     if (averageDiff > diffThreshold) {
+      context.clearRect(0, 0, boundingCanvas.width, boundingCanvas.height);
       console.log(1); // 차이 감지 시 콘솔에 1 출력
     }
     else {
