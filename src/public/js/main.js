@@ -102,23 +102,31 @@ aitranslateBtn.addEventListener("click", captureScreen);
 
 function captureScreen() {
   if (screenStream) {
-    const canvas = document.createElement("canvas");
-    canvas.width = myScreen.width;
-    canvas.height = myScreen.height;
-    const context = canvas.getContext("2d");
+    const boundingCanvas = document.getElementById("boundingCanvas");
+    const videoTrack = screenStream.getVideoTracks()[0];
+    const videoSettings = videoTrack.getSettings(); // 비디오 트랙의 설정 가져오기
+
+    // 비디오 스트림의 너비와 높이를 가져와서 설정
+    boundingCanvas.style.width = `${myScreen.width}px`; // vw 단위 사용
+    boundingCanvas.style.height = `${myScreen.height}px`; // vh 단위 사용
+    boundingCanvas.style.position = "absolute";
 
 
-    context.drawImage(myScreen, 0, 0, canvas.width, canvas.height);
 
 
-    const imageDataUrl = canvas.toDataURL("image/png");
+    const context = boundingCanvas.getContext("2d");
+    // 빨간색 사각형 그리기
+    const x1 = 20;
+    const y1 = 20;
+    const x2 = 80;
+    const y2 = 80;
 
-
-    console.log(imageDataUrl);
+ 
+    context.fillStyle = 'red';
+    context.fillRect(x1, y1, x2 - x1, y2 - y1);
+    boundingCanvas.style.display = "flex";
   }
 }
-
-
 
 //function for sharing video
 async function getVideo() {
@@ -159,14 +167,19 @@ async function getScreen() {
     screenStream = await navigator.mediaDevices.getDisplayMedia({
       audio: true,
       video: {
-        width: { ideal: 1665 }, // 원하는 가로 해상도 설정
-        height: { ideal: 970 }  // 원하는 세로 해상도 설정
+        width:   1665 , // 원하는 가로 해상도 설정
+        height:  970   // 원하는 세로 해상도 설정
       }
     });
+    screenStream.getVideoTracks()[0].applyConstraints({
+      width: 1665,
+      height: 970
+    });
+
+
     screenoff = !screenoff;
     myVideo.style.display = "none";
     peerVideo.style.display = "none";
-
     myScreen.addEventListener('play', () => {
       intervalId = setInterval(() => {
         if (!myScreen.paused && !myScreen.ended) {
@@ -174,7 +187,8 @@ async function getScreen() {
         }
       }, 1000);
     });
-
+    console.log(screenStream.videoWidth); // 비디오 요소의 너비
+console.log(screenStream.videoHeight); // 비디오 요소의 높이
     trackevent = 1; // letthing the backend know that the user opened up screen sharing
     myScreen.srcObject = screenStream;
     myPeerConnection.addTrack(screenStream.getVideoTracks()[0], screenStream);
@@ -561,7 +575,7 @@ socket.on("participant_count", (participantCount) => {
   imgElement.src = "/public/image/human.png";
   const numberElement = document.createElement("span");
   numberElement.style.whiteSpace = "pre";
-  numberElement.textContent ="  " + participantCount; // 추가할 숫자 설정
+  numberElement.textContent = "  " + participantCount; // 추가할 숫자 설정
   callPeople.innerText = "";
   callPeople.appendChild(imgElement);
   callPeople.appendChild(numberElement);

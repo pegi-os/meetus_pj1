@@ -56,10 +56,9 @@ html(lang="en")
                 button#disconnect 
                     img(src ="/public/image/disconnect.png", width = "40px", height = "40px")
             div#screenStream 
-                //- button#audio Mute
-                //- select#cameraSelect 
-                video#myScreen(autoplay, playinline, width="1665", height="970")
+                video#myScreen(style = "object-fit:cover;", autoplay, playinline, width="1665", height="970")
                 canvas#myCanvas
+                canvas#boundingCanvas
             div#peerStream
                 video#peerVideo(autoplay, playinline, width = "640", height = "640")  
                 video#peerScreen(autoplay, playinline, width="300", height="300")   
