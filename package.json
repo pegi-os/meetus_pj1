@@ -5,6 +5,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "nodemon"
+    
   },
   "devDependencies": {
     "@babel/cli": "^7.22.9",

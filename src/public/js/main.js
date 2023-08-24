@@ -1,5 +1,5 @@
 const socket = io();
-import * as mathematics from "./chatManager.js";
+
 //getElement
 const myScreen = document.getElementById("myScreen");
 const myVideo = document.getElementById("myVideo");
@@ -109,20 +109,38 @@ function drawText(text, x, y, font, color) {
 
 function captureScreen() {
   if (screenStream) {
+    const canvas = document.createElement('canvas');
+    canvas.width = myScreen.offsetWidth;
+    canvas.height = myScreen.offsetHeight;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(myScreen, 0, 0, canvas.width, canvas.height);
+    canvas.style.position = 'absolute';
+    canvas.style.left = myScreen.offsetLeft + 'px';
+    canvas.style.top = myScreen.offsetTop + 'px';
 
-    // myScreen 요소의 너비와 높이를 가져와서 설정
-    const myScreenWidth = myScreen.offsetWidth;
-    const myScreenHeight = myScreen.offsetHeight;
-    boundingCanvas.style.width = `${myScreenWidth}px`;
-    boundingCanvas.style.height = `${myScreenHeight}px`;
-    boundingCanvas.style.position = "absolute";
-    // myScreen 요소의 위치를 가져와서 설정
-    const myScreenRect = myScreen.getBoundingClientRect();
-    boundingCanvas.style.left = `${myScreenRect.left}px`;
-    boundingCanvas.style.top = `${myScreenRect.top}px`;
 
-    drawText("Hello, Canvas!", 100,150, "24px Arial", "blue");
+    const imageBase64 = canvas.toDataURL('image/jpeg');
+    const base64Data = imageBase64.split(',')[1];
+    const link = document.createElement('a');
+    link.href = imageBase64;
+    link.download = 'screenshot.jpg';
+    link.click();
 
+    // socket.emit('sendImage', { base64Data });
+
+    //  socket.on('imageData', (base64Image) => {
+    //   const canvas = document.getElementById('canvas');
+    //   const ctx = canvas.getContext('2d');
+    //   const img = new Image();
+
+    //   img.onload = () => {
+    //     canvas.width = img.width;
+    //     canvas.height = img.height;
+    //     ctx.drawImage(img, 0, 0);
+    //   };
+
+    //   img.src = 'data:image/jpeg;base64,' + base64Image; // Set the image source directly from the base64 data
+    // });
   }
 }
 
@@ -136,7 +154,7 @@ async function getVideo() {
         height: { ideal: 970 }
       }
     });
-    console.log(mathematics.square(10));
+
     trackevent = 2; // letting the backend know that the user opened up camera(video) sharing
     myVideo.srcObject = videoStream;
     console.log(videoStream);
@@ -152,8 +170,6 @@ async function getVideo() {
       const offerDataString = JSON.stringify(offerData); // when sending data to the backend, it needs to be in string
       socket.emit("send_media", offerDataString, roomName)
     }
-
-    await getCamera();
   } catch (e) {
     console.log(e);
   }

@@ -56,12 +56,12 @@ html(lang="en")
                 button#disconnect 
                     img(src ="/public/image/disconnect.png", width = "40px", height = "40px")
             div#screenStream 
-                video#myScreen(style = "object-fit:fill;", autoplay, playinline, width="1665", height="970")
+                video#myScreen(style = "object-fit:fill;", autoplay, playinline, width="14021210", height="970")
                 canvas#myCanvas
                 canvas#boundingCanvas
             div#peerStream
                 video#peerVideo(autoplay, playinline, width = "640", height = "640")  
-                video#peerScreen(autoplay, playinline, width="300", height="300")   
+                video#peerScreen(style = "object-fit:fill;", autoplay, playinline, width="300", height="300")   
             div#footer
                 button#callDisplay  
                     img(src ="/public/image/screensharing.png", width = "30px", height = "20px")
@@ -85,3 +85,6 @@ html(lang="en")
         script(src="/socket.io/socket.io.js") 
         script(type="module" src="/public/js/main.js") 
         script(src = "https://docs.opencv.org/master/opencv.js")
+
+
+//- style = "object-fit:fill;"

@@ -282,6 +282,7 @@ body{
 }
 
 #callRoom {
+  display: none;
   position: relative;
   line-height: 0;
   flex-direction: column;
@@ -310,7 +311,7 @@ body{
 
 #myScreen{
   pointer-events: none;
-  width: 1665px;
+  width: 5000px;
   height: 970px;
 }
 
