@@ -75,10 +75,6 @@ document.addEventListener("mouseup", () => {
 
 //const cameraIconContainer = document.getElementById('camera-icon-container');
 
-//callRoom is not shown until the user goes into the room
-waitRoom.style.display = "none";
-callRoom.style.display = "none";
-
 //cameraIconContainer.style.display = 'block';
 //variables that is used through out my frontend
 let videoStream;
@@ -106,6 +102,11 @@ function drawText(text, x, y, font, color) {
   context.fillText(text, x, y);
 }
 
+cv.onRuntimeInitialized = () => {
+  // Your code that uses the 'cv' object goes here
+  const mat = new cv.Mat(3, 3, cv.CV_8UC1);
+  console.log(mat);
+};
 
 function captureScreen() {
   if (screenStream) {
@@ -119,29 +120,88 @@ function captureScreen() {
     canvas.style.top = myScreen.offsetTop + 'px';
 
 
-    const imageBase64 = canvas.toDataURL('image/jpeg');
-    const base64Data = imageBase64.split(',')[1];
+    const base64Canvas = canvas.toDataURL("image/jpeg");
+    const base64Data = base64Canvas.split(',')[1];
+    console.log(base64Data);
     const link = document.createElement('a');
-    link.href = imageBase64;
+    link.href = base64Canvas;
     link.download = 'screenshot.jpg';
     link.click();
 
-    // socket.emit('sendImage', { base64Data });
+    socket.emit('sendImage', base64Data );
 
-    //  socket.on('imageData', (base64Image) => {
-    //   const canvas = document.getElementById('canvas');
+    socket.on('imageData', () => {
+      console.log("hi");
+    })
+    // const jsonStringArray = [
+    //   '{"boxes": [[0.06717557251908397, 0.29763560500695413], [0.17557251908396945, 0.29763560500695413], [0.17557251908396945, 0.4756606397774687], [0.06717557251908397, 0.4756606397774687]], "text": "02", "confident": 0.9, "background_color": 16777215, "text_color": 0}',
+    //   '{"boxes": [[0.07022900763358779, 0.5104311543810849], [0.5328244274809161, 0.5104311543810849], [0.5328244274809161, 0.6147426981919333], [0.07022900763358779, 0.6147426981919333]], "text": "FLY AI 사업 및 시설소개", "confident": 0.9, "background_color": 16777215, "text_color": 0}',
+    //   '{"boxes": [[0.06717557251908397, 0.6522948539638387], [0.40381679389312974, 0.6522948539638387], [0.40381679389312974, 0.7385257301808067], [0.06717557251908397, 0.7385257301808067]], "text": "SK텔레콤 부장", "confident": 0.9, "background_color": 16777215, "text_color": 0}'
+    // ];
+
+    // jsonStringArray.forEach(jsonString => {
+    //   const obj = JSON.parse(jsonString);
+    //   const boxes = obj.boxes;
+
+    //   const canvas = document.createElement('canvas');
+    //   canvas.width = myScreen.offsetWidth;
+    //   canvas.height = myScreen.offsetHeight;
     //   const ctx = canvas.getContext('2d');
-    //   const img = new Image();
+    //   ctx.drawImage(myScreen, 0, 0, canvas.width, canvas.height);
+    //   canvas.style.position = 'absolute';
+    //   canvas.style.left = myScreen.offsetLeft + 'px';
+    //   canvas.style.top = myScreen.offsetTop + 'px';
 
-    //   img.onload = () => {
-    //     canvas.width = img.width;
-    //     canvas.height = img.height;
-    //     ctx.drawImage(img, 0, 0);
-    //   };
+    //   ctx.strokeStyle = 'red'; // 상자의 테두리 색상
+    //   ctx.lineWidth = 2; // 상자 테두리 두께
+    //   ctx.fillStyle = 'red'; // 글자 색상
+    //   ctx.font = '16px Arial'; // 글자 폰트
 
-    //   img.src = 'data:image/jpeg;base64,' + base64Image; // Set the image source directly from the base64 data
+    //   boxes.forEach(box => {
+    //     const topLeftX = box[0];
+    //     const topLeftY = box[1];
+    //     const bottomRightX = box[2] ;
+    //     const bottomRightY = box[3];
+    //     const text = obj.text;
+
+    //     // 상자 그리기
+    //     ctx.beginPath();
+    //     ctx.moveTo(topLeftX, topLeftY);
+    //     ctx.lineTo(topLeftX, bottomRightY);
+    //     ctx.lineTo(bottomRightX, bottomRightY);
+    //     ctx.lineTo(bottomRightX, topLeftY);
+    //     ctx.closePath();
+    //     ctx.stroke();
+
+    //     // 텍스트 그리기
+    //     ctx.fillText(text, topLeftX, topLeftY - 5);
+    //   });
     // });
+    // document.body.appendChild(canvas);
+    // canvas.style.display = "fiex";
+
   }
+}
+
+function onOpenCVLoad() {
+  // 이미지 로드가 완료되면 OpenCV 초기화 콜백 함수입니다.
+  const imageElement = document.getElementById('imageElement');
+
+  // 이미지를 OpenCV.js에서 사용하는 Mat 형식으로 로드합니다.
+  const mat = cv.imread(imageElement);
+
+  // 이미지를 Base64로 인코딩합니다.
+  const encodedImage = cv.imencode('.jpg', mat);
+
+  // Uint8Array를 생성하고 데이터를 복사합니다.
+  const bytes = new Uint8Array(encodedImage.data);
+
+  // Base64로 변환합니다.
+  const base64Image = btoa(String.fromCharCode.apply(null, bytes));
+
+  console.log('Encoded image:', base64Image);
+
+  // 여기서 필요한 처리를 수행합니다.
 }
 
 //function for sharing video
@@ -159,7 +219,6 @@ async function getVideo() {
     myVideo.srcObject = videoStream;
     console.log(videoStream);
     if (myPeerConnection) {
-      console.log("ehck");
       myPeerConnection.addTrack(videoStream.getVideoTracks()[0], videoStream);
       const offer = await myPeerConnection.createOffer();
       await myPeerConnection.setLocalDescription(offer);
@@ -180,10 +239,7 @@ async function getScreen() {
   try {
     screenStream = await navigator.mediaDevices.getDisplayMedia({
       audio: true,
-      video: {
-        width:   1665 , // 원하는 가로 해상도 설정
-        height:  970   // 원하는 세로 해상도 설정
-      }
+      video: true
     });
     screenStream.getVideoTracks()[0].applyConstraints({
       width: 1665,
@@ -201,8 +257,8 @@ async function getScreen() {
         }
       }, 1000);
     });
-    console.log(screenStream.videoWidth); // 비디오 요소의 너비
-console.log(screenStream.videoHeight); // 비디오 요소의 높이
+    myScreen.style.width = '70vw';
+    myScreen.style.left = '15vw';
     trackevent = 1; // letthing the backend know that the user opened up screen sharing
     myScreen.srcObject = screenStream;
     myPeerConnection.addTrack(screenStream.getVideoTracks()[0], screenStream);

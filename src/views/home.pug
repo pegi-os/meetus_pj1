@@ -7,6 +7,7 @@ html(lang="en")
         title Meetus
         link(rel="stylesheet", href="https://unpkg.com/mvp.css")
         link(rel='stylesheet', href="/public/home.css")
+        
     body
         div#wait
             header
@@ -56,7 +57,7 @@ html(lang="en")
                 button#disconnect 
                     img(src ="/public/image/disconnect.png", width = "40px", height = "40px")
             div#screenStream 
-                video#myScreen(style = "object-fit:fill;", autoplay, playinline, width="14021210", height="970")
+                video#myScreen(style = "object-fit:fill;", autoplay, playinline)
                 canvas#myCanvas
                 canvas#boundingCanvas
             div#peerStream
@@ -88,3 +89,5 @@ html(lang="en")
 
 
 //- style = "object-fit:fill;"
+
+ https://docs.opencv.org/4.8.0/opencv.js

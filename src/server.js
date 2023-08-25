@@ -93,40 +93,36 @@ wsServer.on("connection", (socket) => {
   });
 
   socket.on('sendImage', async (data) => {
-    try {
-      const base64Data = data.base64Data;
-      
+    
+     
+
       // Produce the image data to Kafka topic
       await producer.connect();
       await producer.send({
-        topic: 'your-kafka-topic',
-        messages: [{ value: base64Data }],
+        topic: 'cluster',
+        messages: [{ value: data }],
       });
       
       console.log('Image data sent to Kafka.');
 
-      const consumer = kafka.consumer({ groupId: 'image-processing-group' });
+      const consumer = kafka.consumer({ groupId: 'my-kafka-cluster' });
 
       await consumer.connect();
-      await consumer.subscribe({ topic: 'your-kafka-topic', fromBeginning: false });
+      await consumer.subscribe({ topic: 'english', fromBeginning: true });
 
       await consumer.run({
         eachMessage: async ({ topic, partition, message }) => {
          
-    
-          // Assuming the message contains a base64 encoded image
-          const base64Image = message.value.toString(); // Convert buffer to string
-          socket.to(roomName).emit('imageData', base64Image);
+          
+          console.log(message);
+          socket.emit('imageData');
         }
       });
 
-
+      
       // Respond to the frontend
-      socket.emit('imageReceived', { success: true });
-    } catch (error) {
-      console.error('Error sending image data to Kafka:', error);
-      socket.emit('imageReceived', { success: false });
-    }
+      
+     
   });
 
 
