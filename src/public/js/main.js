@@ -37,45 +37,6 @@ const aitranslateBtn = document.getElementById('callAitranslate');
 const boundingCanvas = document.getElementById('boundingCanvas');
 const context = boundingCanvas.getContext("2d");
 
-callChatBtn.addEventListener("click", () => {
-  chatContainer.style.display = "block";
-  console.log(chatContainer.style.display);
-});
-
-chatCloseBtn.addEventListener("click", () => {
-  chatContainer.style.display = "none";
-});
-
-let isDragging = false;
-let initialX = 0;
-let initialY = 0;
-
-chatContainer.addEventListener("mousedown", (e) => {
-  if (e.button === 0) { // Check if left mouse button is pressed
-    isDragging = true;
-    initialX = e.clientX - chatContainer.getBoundingClientRect().left;
-    initialY = e.clientY - chatContainer.getBoundingClientRect().top;
-  }
-});
-
-document.addEventListener("mousemove", (e) => {
-  if (!isDragging) return;
-
-  const newX = e.clientX - initialX;
-  const newY = e.clientY - initialY;
-
-  chatContainer.style.left = `${newX}px`;
-  chatContainer.style.top = `${newY}px`;
-});
-
-document.addEventListener("mouseup", () => {
-  isDragging = false;
-});
-
-
-//const cameraIconContainer = document.getElementById('camera-icon-container');
-
-//cameraIconContainer.style.display = 'block';
 //variables that is used through out my frontend
 let videoStream;
 let screenStream;
@@ -90,7 +51,11 @@ let trackevent = 2;
 let peerStream;
 let previousFrame = null;
 let intervalId;
-let participant
+let participant;
+let isDragging = false;
+let initialX = 0;
+let initialY = 0;
+
 
 // ------------------------function for when the user enterd the room----------------------------
 // Function to capture the current frame
@@ -102,13 +67,8 @@ function drawText(text, x, y, font, color) {
   context.fillText(text, x, y);
 }
 
-cv.onRuntimeInitialized = () => {
-  // Your code that uses the 'cv' object goes here
-  const mat = new cv.Mat(3, 3, cv.CV_8UC1);
-  console.log(mat);
-};
 
-function captureScreen() {
+async function captureScreen() {
   if (screenStream) {
     const canvas = document.createElement('canvas');
     canvas.width = myScreen.offsetWidth;
@@ -122,87 +82,26 @@ function captureScreen() {
 
     const base64Canvas = canvas.toDataURL("image/jpeg");
     const base64Data = base64Canvas.split(',')[1];
-    console.log(base64Data);
-    const link = document.createElement('a');
-    link.href = base64Canvas;
-    link.download = 'screenshot.jpg';
-    link.click();
+    // const link = document.createElement('a');
+    // link.href = base64Canvas;
+    // link.download = 'screenshot.jpg';
+    // link.click();
 
-    socket.emit('sendImage', base64Data );
+    socket.emit('sendImage', base64Data, roomName);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    socket.on('imageData', () => {
-      console.log("hi");
-    })
-    // const jsonStringArray = [
-    //   '{"boxes": [[0.06717557251908397, 0.29763560500695413], [0.17557251908396945, 0.29763560500695413], [0.17557251908396945, 0.4756606397774687], [0.06717557251908397, 0.4756606397774687]], "text": "02", "confident": 0.9, "background_color": 16777215, "text_color": 0}',
-    //   '{"boxes": [[0.07022900763358779, 0.5104311543810849], [0.5328244274809161, 0.5104311543810849], [0.5328244274809161, 0.6147426981919333], [0.07022900763358779, 0.6147426981919333]], "text": "FLY AI 사업 및 시설소개", "confident": 0.9, "background_color": 16777215, "text_color": 0}',
-    //   '{"boxes": [[0.06717557251908397, 0.6522948539638387], [0.40381679389312974, 0.6522948539638387], [0.40381679389312974, 0.7385257301808067], [0.06717557251908397, 0.7385257301808067]], "text": "SK텔레콤 부장", "confident": 0.9, "background_color": 16777215, "text_color": 0}'
-    // ];
 
-    // jsonStringArray.forEach(jsonString => {
-    //   const obj = JSON.parse(jsonString);
-    //   const boxes = obj.boxes;
 
-    //   const canvas = document.createElement('canvas');
-    //   canvas.width = myScreen.offsetWidth;
-    //   canvas.height = myScreen.offsetHeight;
-    //   const ctx = canvas.getContext('2d');
-    //   ctx.drawImage(myScreen, 0, 0, canvas.width, canvas.height);
-    //   canvas.style.position = 'absolute';
-    //   canvas.style.left = myScreen.offsetLeft + 'px';
-    //   canvas.style.top = myScreen.offsetTop + 'px';
 
-    //   ctx.strokeStyle = 'red'; // 상자의 테두리 색상
-    //   ctx.lineWidth = 2; // 상자 테두리 두께
-    //   ctx.fillStyle = 'red'; // 글자 색상
-    //   ctx.font = '16px Arial'; // 글자 폰트
 
-    //   boxes.forEach(box => {
-    //     const topLeftX = box[0];
-    //     const topLeftY = box[1];
-    //     const bottomRightX = box[2] ;
-    //     const bottomRightY = box[3];
-    //     const text = obj.text;
-
-    //     // 상자 그리기
-    //     ctx.beginPath();
-    //     ctx.moveTo(topLeftX, topLeftY);
-    //     ctx.lineTo(topLeftX, bottomRightY);
-    //     ctx.lineTo(bottomRightX, bottomRightY);
-    //     ctx.lineTo(bottomRightX, topLeftY);
-    //     ctx.closePath();
-    //     ctx.stroke();
-
-    //     // 텍스트 그리기
-    //     ctx.fillText(text, topLeftX, topLeftY - 5);
-    //   });
-    // });
-    // document.body.appendChild(canvas);
-    // canvas.style.display = "fiex";
 
   }
 }
 
-function onOpenCVLoad() {
-  // 이미지 로드가 완료되면 OpenCV 초기화 콜백 함수입니다.
-  const imageElement = document.getElementById('imageElement');
 
-  // 이미지를 OpenCV.js에서 사용하는 Mat 형식으로 로드합니다.
-  const mat = cv.imread(imageElement);
 
-  // 이미지를 Base64로 인코딩합니다.
-  const encodedImage = cv.imencode('.jpg', mat);
 
-  // Uint8Array를 생성하고 데이터를 복사합니다.
-  const bytes = new Uint8Array(encodedImage.data);
 
-  // Base64로 변환합니다.
-  const base64Image = btoa(String.fromCharCode.apply(null, bytes));
-
-  console.log('Encoded image:', base64Image);
-
-  // 여기서 필요한 처리를 수행합니다.
-}
 
 //function for sharing video
 async function getVideo() {
@@ -391,7 +290,6 @@ async function handleCameraClick() {
   }
   cameraOff = !cameraOff;
 }
-
 //function for when the user clicked the screen button, the web will process so that the user's screen sharing will be off or on.
 async function handleScreenClick() {
   if (!screenoff) {
@@ -404,9 +302,6 @@ async function handleScreenClick() {
       myVideo.style.display = "flex";
       peerVideo.style.display = "flex";
     }
-
-
-
     screenoff = !screenoff;
     handleScreenChange();
   }
@@ -434,7 +329,6 @@ async function handleCameraChange() {
 
   // Create a new black canvas video track
   const blackVideoTrack = createBlackVideoTrack();
-
   // Add the new black canvas video track to the connection
   myPeerConnection.addTrack(blackVideoTrack, videoStream);
 
@@ -497,87 +391,12 @@ function createBlackVideoTrack() {
   return canvasVideoTrack;
 }
 
-// Scroll to the bottom of the messages container
-function scrollToBottom() {
-  messages.scrollTop = messages.scrollHeight;
-}
 
 screenBtn.addEventListener("click", handleScreenClick);
 videoBtn.addEventListener("click", handleCameraClick);
 callVideoBtn.addEventListener("click", handleCameraClick);
-//screenBtn.addEventListener("click", handleScreenClick);
 audioBtn.addEventListener("click", handleAudioClick);
 callAudioBtn.addEventListener("click", handleAudioClick);
-//cameraSelect.addEventListener("change", handleCameraChange);
-
-// --------------- wait room form (choose and enter a room) -----------------
-
-async function showRoom() {
-  wait.style.display = "none";
-  loginRoom.style.display = "none";
-  waitRoom.style.display = "none";
-  waitRoomContainer.style.display = "none";
-  callRoom.style.display = "flex";
-  screenStreamContainer.appendChild(myVideo);
-
-
-}
-
-
-function showSharingRoom() {
-  wait.style.display = "none";
-  loginRoom.style.display = "none";
-  waitRoom.style.display = "flex";
-}
-
-async function handleRoomSubmit(e) {
-  e.preventDefault();
-  //make connection to peer. using ice candidate. look at initCall for more detail
-  //setting nickname
-  const nicknameInput = loginRoom.querySelector("#nickname");
-  //entering chatting room
-  //const roomNameInput = loginRoom.querySelector("#roomName");
-  //socket.emit("enter_room", roomNameInput.value, showRoom);
-
-  //roomName = roomNameInput.value;
-  nickname = nicknameInput.value;
-  showSharingRoom();
-}
-
-async function initCall() {
-  makeConnection();
-}
-
-async function handleRoom(e) {
-  e.preventDefault();
-  await initCall();
-  const roomNameInput = modal.querySelector("#roomName");
-  console.log(roomNameInput);
-  if (videoStream) {
-    console.log("hi");
-    myPeerConnection.addTrack(videoStream.getVideoTracks()[0], videoStream);
-    const offer = myPeerConnection.createOffer();
-    myPeerConnection.setLocalDescription(offer);
-    const offerData = {
-      offer,
-      trackevent
-    };
-    const offerDataString = JSON.stringify(offerData); // when sending data to the backend, it needs to be in string
-    socket.emit("send_media", offerDataString, roomName)
-  }
-  if (roomNameInput.value === '') {
-    // Input is empty, show an error message or handle accordingly
-    console.log('Please enter a room name');
-  }
-  else {
-    socket.emit("set_nickname", nickname);
-    socket.emit("enter_room", roomNameInput.value, showRoom);
-    roomName = roomNameInput.value;
-  }
-}
-
-joinRoomButton.addEventListener('click', handleRoom);
-loginRoomForm.addEventListener("submit", handleRoomSubmit);
 
 // --------------------------- Socket Code ------------------------------------------
 
@@ -590,6 +409,79 @@ socket.on("welcome", async () => {
   myPeerConnection.setLocalDescription(offer);
   socket.emit("send_offer", offer, roomName);
 });
+
+
+socket.on("imageData", (data) => {
+  console.log("ho");
+  const jsonData = JSON.parse(data);
+  const canvas = document.createElement('canvas');
+  canvas.width = myScreen.offsetWidth;
+  canvas.height = myScreen.offsetHeight;
+  const ctx = canvas.getContext('2d');
+  canvas.style.position = 'absolute';
+  canvas.style.left = myScreen.offsetLeft + 'px';
+  canvas.style.top = myScreen.offsetTop + 'px';
+
+  let firstx;
+  let secondx;
+  let firsty;
+  let secondy;
+
+
+  jsonData.forEach(jsonString => {
+    const obj = JSON.parse(jsonString);
+    const boxes = obj.boxes;
+    console.log(boxes);
+
+    ctx.strokeStyle = 'white'; // 상자의 테두리 색상
+    ctx.lineWidth = 2; // 상자 테두리 두께
+    ctx.fillStyle = 'white'; // 글자 색상
+    ctx.font = '16px Arial'; // 글자 폰트
+    let flag = 0;
+
+    boxes.forEach(box => {
+      const x = box[0] * canvas.width;
+      const y = box[1] * canvas.height;
+
+      const text = obj.text;
+      flag = flag + 1;
+      // // 상자 그리기
+      if (flag === 1) {
+        ctx.beginPath();
+        firstx = x;
+        firsty = y;
+      }
+      else if (flag === 2) {
+        secondx = x;
+      }
+      else if (flag === 3) {
+        secondy = y;
+      }
+      ctx.lineTo(x, y);
+      if (flag === 4) {
+        console.log(secondx);
+        console.log(firstx);
+        ctx.stroke();
+        ctx.closePath();
+        ctx.fill(); // 영역 색칠
+        ctx.fillStyle = 'black'; // 텍스트 색상을 검정색으로 변경
+
+        const fontSize = Math.min(secondx - firstx, secondy - firsty) * 0.5;
+        console.log(secondx - firstx); // 예시로 폰트 크기를 상자의 절반으로 설정
+        ctx.font = `${fontSize}px Arial`;
+        ctx.fillText(text, x, y - 5);
+        ctx.fillStyle = 'red'; // 텍스트 색상을 검정색으로 변경
+      }
+
+    });
+  });
+  
+  document.body.appendChild(canvas);
+  canvas.style.zIndex = "2000";
+  canvas.style.display = "flex";
+})
+
+
 
 socket.on("receive_offer", async (offer) => {
   myPeerConnection.addEventListener("datachannel", (e) => {
@@ -633,10 +525,8 @@ socket.on("receive_event", async (event) => {
   });
 });
 
-
 socket.on("receive_ice", (ice) => {
   myPeerConnection.addIceCandidate(ice);
-
 });
 
 socket.on("participant_count", (participantCount) => {
@@ -664,7 +554,7 @@ socket.on("participant_count", (participantCount) => {
     myVideo.style.width = "40vw";  // Set the desired width
     myVideo.style.height = "75vh";
     myVideo.style.top = "10vh";
-    myVideo.style.left = "5vw";         // Set the desired top position
+    myVideo.style.left = "5vw";    // Set the desired top position
     myVideo.style.borderRadius = "10px";
     peerVideo.style.display = "flex";
   }
@@ -739,7 +629,72 @@ function makeConnection() {
   myPeerConnection.addEventListener("track", handleAddTrack);
 }
 
+// --------------- wait room form (choose and enter a room) -----------------
+
+/* wait room function part */
+
+async function showRoom() {
+  wait.style.display = "none";
+  loginRoom.style.display = "none";
+  waitRoom.style.display = "none";
+  waitRoomContainer.style.display = "none";
+  callRoom.style.display = "flex";
+  screenStreamContainer.appendChild(myVideo);
+}
+
+function showSharingRoom() {
+  wait.style.display = "none";
+  loginRoom.style.display = "none";
+  waitRoom.style.display = "flex";
+}
+
+async function handleRoomSubmit(e) {
+  e.preventDefault();
+  //make connection to peer. using ice candidate. look at initCall for more detail
+  //setting nickname
+  const nicknameInput = loginRoom.querySelector("#nickname");
+  nickname = nicknameInput.value;
+  showSharingRoom();
+}
+async function initCall() {
+  makeConnection();
+}
+
+async function handleRoom(e) {
+  e.preventDefault();
+  await initCall();
+  const roomNameInput = modal.querySelector("#roomName");
+  if (videoStream) {
+    myPeerConnection.addTrack(videoStream.getVideoTracks()[0], videoStream);
+    const offer = myPeerConnection.createOffer();
+    myPeerConnection.setLocalDescription(offer);
+    const offerData = {
+      offer,
+      trackevent
+    };
+    const offerDataString = JSON.stringify(offerData); // when sending data to the backend, it needs to be in string
+    socket.emit("send_media", offerDataString, roomName)
+  }
+  if (roomNameInput.value === '') {
+    // Input is empty, show an error message or handle accordingly
+    console.log('Please enter a room name');
+  }
+  else {
+    socket.emit("set_nickname", nickname);
+    socket.emit("enter_room", roomNameInput.value, showRoom);
+    roomName = roomNameInput.value;
+  }
+}
+
+/* wait room event part */
+
+joinRoomButton.addEventListener('click', handleRoom);
+loginRoomForm.addEventListener("submit", handleRoomSubmit);
+
+
 // ----------------------------------- Chatting Area ---------------------------------------------------
+
+/* chat room function part */
 
 function addMessage(e) {
   const li = document.createElement("li");
@@ -764,10 +719,14 @@ function handleChatSubmit(e) {
   input.value = "";
   scrollToBottom();
 }
+// Scroll to the bottom of the messages container
+function scrollToBottom() {
+  messages.scrollTop = messages.scrollHeight;
+}
+
+/* chat room event part */
 
 chatForm.addEventListener("submit", handleChatSubmit);
-
-
 
 joinButton.addEventListener('click', () => {
   modal.style.display = 'block';
@@ -797,3 +756,38 @@ homeButton.addEventListener('click', () => {
 disconnectBtn.addEventListener('click', () => {
   window.location.href = 'http://localhost:3000/'; // Replace with your actual home page URL
 });
+
+
+callChatBtn.addEventListener("click", () => {
+  chatContainer.style.display = "block";
+  console.log(chatContainer.style.display);
+});
+
+chatCloseBtn.addEventListener("click", () => {
+  chatContainer.style.display = "none";
+});
+
+
+chatContainer.addEventListener("mousedown", (e) => {
+  if (e.button === 0) { // Check if left mouse button is pressed
+    isDragging = true;
+    initialX = e.clientX - chatContainer.getBoundingClientRect().left;
+    initialY = e.clientY - chatContainer.getBoundingClientRect().top;
+  }
+});
+
+document.addEventListener("mousemove", (e) => {
+  if (!isDragging) return;
+
+  const newX = e.clientX - initialX;
+  const newY = e.clientY - initialY;
+
+  chatContainer.style.left = `${newX}px`;
+  chatContainer.style.top = `${newY}px`;
+});
+
+document.addEventListener("mouseup", () => {
+  isDragging = false;
+});
+
+

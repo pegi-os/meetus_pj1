@@ -27,11 +27,11 @@ let currentRoom = null;
 
 const kafka = new Kafka({
   clientId: 'my-app',
-  brokers: ['52.91.126.82:9092','34.232.53.143:9092','100.24.240.6:9092']
+  brokers: ['52.91.126.82:9092', '34.232.53.143:9092', '100.24.240.6:9092']
 });
 
 const producer = kafka.producer();
-
+let jsonData;
 
 
 
@@ -92,37 +92,41 @@ wsServer.on("connection", (socket) => {
     }
   });
 
-  socket.on('sendImage', async (data) => {
-    
-     
+  socket.on('sendImage', async (data, roomName) => {
+    // Produce the image data to Kafka topic
+    await producer.connect();
+    producer.send({
+      topic: 'topic',
+      messages: [{ value: data }],
+    });
 
-      // Produce the image data to Kafka topic
-      await producer.connect();
-      await producer.send({
-        topic: 'cluster',
-        messages: [{ value: data }],
-      });
-      
-      console.log('Image data sent to Kafka.');
+    console.log('Image data sent to Kafka.');
 
-      const consumer = kafka.consumer({ groupId: 'my-kafka-cluster' });
+    const consumer = kafka.consumer({ groupId: 'my-kafka-cluster' });
 
-      await consumer.connect();
-      await consumer.subscribe({ topic: 'english', fromBeginning: true });
+    await consumer.connect();
+    consumer.subscribe({ topic: 'korean', fromBeginning: false });
 
-      await consumer.run({
-        eachMessage: async ({ topic, partition, message }) => {
-         
-          
-          console.log(message);
-          socket.emit('imageData');
-        }
-      });
+    consumer.run({
+      eachMessage: async ({ topic, partition, message }) => {
 
-      
-      // Respond to the frontend
-      
-     
+
+        const buffer = message.value; // 위에서 제공한 value 값
+
+        // 버퍼를 문자열로 변환
+        const jsonString = buffer.toString('utf-8'); // 'utf-8'은 문자 인코딩 방식입니다.
+
+        // JSON 문자열을 파싱하여 객체로 변환
+
+
+        console.log("1: " , jsonString);
+        socket.emit("imageData", jsonString);
+        console.log("2:" , jsonString);
+      }
+    });
+
+    // Respond to the frontend
+
   });
 
 
