@@ -37,6 +37,11 @@ const aitranslateBtn = document.getElementById('callAitranslate');
 const boundingCanvas = document.getElementById('boundingCanvas');
 const context = boundingCanvas.getContext("2d");
 
+
+const canvas = document.getElementById("myCanvas");
+const ctx = canvas.getContext('2d');
+myScreen.style.width = '70vw';
+myScreen.style.left = '15vw';
 //variables that is used through out my frontend
 let videoStream;
 let screenStream;
@@ -55,21 +60,22 @@ let participant;
 let isDragging = false;
 let initialX = 0;
 let initialY = 0;
-
+let base64Data = null;
 
 // ------------------------function for when the user enterd the room----------------------------
 // Function to capture the current frame
 aitranslateBtn.addEventListener("click", captureScreen);
 
-function drawText(text, x, y, font, color) {
-  context.fillStyle = color;
-  context.font = font;
-  context.fillText(text, x, y);
-}
-
 
 async function captureScreen() {
   if (screenStream) {
+
+    intervalId = setInterval(() => {
+      if (!myScreen.paused && !myScreen.ended) {
+        processVideoFrameMyVideo();
+      }
+    }, 1000);
+
     const canvas = document.createElement('canvas');
     canvas.width = myScreen.offsetWidth;
     canvas.height = myScreen.offsetHeight;
@@ -81,20 +87,34 @@ async function captureScreen() {
 
 
     const base64Canvas = canvas.toDataURL("image/jpeg");
-    const base64Data = base64Canvas.split(',')[1];
+    base64Data = base64Canvas.split(',')[1];
     // const link = document.createElement('a');
     // link.href = base64Canvas;
     // link.download = 'screenshot.jpg';
     // link.click();
-
-    socket.emit('sendImage', base64Data, roomName);
+    socket.emit('sendImage', base64Data, roomName, nickname);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+  else {
+    intervalId = setInterval(() => {
+      if (!peerScreen.paused && !peerScreen.ended) {
+        processVideoFramePeerVideo();
+      }
+    }, 1000);
+    const canvas = document.createElement('canvas');
+    canvas.width = peerScreen.offsetWidth;
+    canvas.height = peerScreen.offsetHeight;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(peerScreen, 0, 0, canvas.width, canvas.height);
+    canvas.style.position = 'absolute';
+    canvas.style.left = peerScreen.offsetLeft + 'px';
+    canvas.style.top = peerScreen.offsetTop + 'px';
 
+    const base64Canvas = canvas.toDataURL("image/jpeg");
+    base64Data = base64Canvas.split(',')[1];
 
-
-
-
-
+    socket.emit('sendImage', base64Data, roomName, nickname);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
 }
 
@@ -116,11 +136,13 @@ async function getVideo() {
 
     trackevent = 2; // letting the backend know that the user opened up camera(video) sharing
     myVideo.srcObject = videoStream;
-    console.log(videoStream);
+
+
     if (myPeerConnection) {
       myPeerConnection.addTrack(videoStream.getVideoTracks()[0], videoStream);
       const offer = await myPeerConnection.createOffer();
       await myPeerConnection.setLocalDescription(offer);
+      console.log(offer);
       const offerData = {
         offer,
         trackevent
@@ -145,17 +167,17 @@ async function getScreen() {
       height: 970
     });
 
+    canvas.willReadFrequently = true;
+    canvas.width = myScreen.offsetWidth;
+    canvas.height = myScreen.offsetHeight;
+    canvas.hidden = true;
+    canvas.style.left = myScreen.offsetLeft + 'px';
+    canvas.style.top = myScreen.offsetTop + 'px';
 
     screenoff = !screenoff;
     myVideo.style.display = "none";
     peerVideo.style.display = "none";
-    myScreen.addEventListener('play', () => {
-      intervalId = setInterval(() => {
-        if (!myScreen.paused && !myScreen.ended) {
-          processVideoFrame();
-        }
-      }, 1000);
-    });
+
     myScreen.style.width = '70vw';
     myScreen.style.left = '15vw';
     trackevent = 1; // letthing the backend know that the user opened up screen sharing
@@ -176,19 +198,17 @@ async function getScreen() {
   }
 }
 
-function processVideoFrame() {
-  const canvas = document.getElementById("myCanvas");
-  const ctx = canvas.getContext('2d');
-  canvas.willReadFrequently = true;
-  canvas.width = myScreen.videoWidth;
-  canvas.height = myScreen.videoHeight;
-  canvas.hidden = true;
-  ctx.drawImage(myScreen, 0, 0, canvas.width, canvas.height);
 
+
+
+
+function processVideoFrameMyVideo() {
+
+  ctx.drawImage(myScreen, 0, 0, canvas.width, canvas.height);
   const currentFrame = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
 
   if (previousFrame) {
-    const diffThreshold = 5; // 임계값 설정
+    const diffThreshold = 3; // 임계값 설정
     let totalDiff = 0;
 
     for (let i = 0; i < currentFrame.length; i += 4) {
@@ -199,8 +219,26 @@ function processVideoFrame() {
     const averageDiff = totalDiff / (currentFrame.length / 4);
 
     if (averageDiff > diffThreshold) {
+      console.log(1);
       context.clearRect(0, 0, boundingCanvas.width, boundingCanvas.height);
-      console.log(1); // 차이 감지 시 콘솔에 1 출력
+      // ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (base64Data) {
+        const canvas = document.createElement('canvas');
+        canvas.width = myScreen.offsetWidth;
+        canvas.height = myScreen.offsetHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(myScreen, 0, 0, canvas.width, canvas.height);
+        canvas.style.position = 'absolute';
+        canvas.style.left = myScreen.offsetLeft + 'px';
+        canvas.style.top = myScreen.offsetTop + 'px';
+       
+        const base64Canvas = canvas.toDataURL("image/jpeg");
+        base64Data = base64Canvas.split(',')[1];
+    
+        socket.emit('sendImage', base64Data, roomName);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+      previousFrame = currentFrame;
     }
     else {
 
@@ -209,6 +247,55 @@ function processVideoFrame() {
 
   previousFrame = currentFrame.slice();
 }
+
+
+function processVideoFramePeerVideo() {
+
+  ctx.drawImage(peerScreen, 0, 0, canvas.width, canvas.height);
+  const currentFrame = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+
+  if (previousFrame) {
+    const diffThreshold = 3; // 임계값 설정
+    let totalDiff = 0;
+
+    for (let i = 0; i < currentFrame.length; i += 4) {
+      const diff = Math.abs(currentFrame[i] - previousFrame[i]);
+      totalDiff += diff;
+    }
+
+    const averageDiff = totalDiff / (currentFrame.length / 4);
+
+    if (averageDiff > diffThreshold) {
+      console.log(1);
+      context.clearRect(0, 0, boundingCanvas.width, boundingCanvas.height);
+      // ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (base64Data) {
+        const canvas = document.createElement('canvas');
+        canvas.width = myScreen.offsetWidth;
+        canvas.height = myScreen.offsetHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(peerScreen, 0, 0, canvas.width, canvas.height);
+        canvas.style.position = 'absolute';
+        canvas.style.left = myScreen.offsetLeft + 'px';
+        canvas.style.top = myScreen.offsetTop + 'px';
+
+        const base64Canvas = canvas.toDataURL("image/jpeg");
+        base64Data = base64Canvas.split(',')[1];
+        socket.emit('sendImage', base64Data, roomName);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+      previousFrame = currentFrame;
+    }
+    else {
+
+    }
+  }
+
+  previousFrame = currentFrame.slice();
+}
+
+
+
 
 //function for allowing the user to change camera in their device.
 //For example back camera or front camera
@@ -304,6 +391,8 @@ async function handleScreenClick() {
     }
     screenoff = !screenoff;
     handleScreenChange();
+    clearInterval(intervalId);
+    context.clearRect(0, 0, boundingCanvas.width, boundingCanvas.height);
   }
   else if (screenoff) {
     getScreen();
@@ -372,8 +461,6 @@ async function handleScreenChange() {
   };
   const offerDataString = JSON.stringify(offerData);
   socket.emit("send_media", offerDataString, roomName);
-
-  clearInterval(intervalId);
 }
 
 function createBlackVideoTrack() {
@@ -414,13 +501,13 @@ socket.on("welcome", async () => {
 socket.on("imageData", (data) => {
   console.log("ho");
   const jsonData = JSON.parse(data);
-  const canvas = document.createElement('canvas');
-  canvas.width = myScreen.offsetWidth;
-  canvas.height = myScreen.offsetHeight;
-  const ctx = canvas.getContext('2d');
-  canvas.style.position = 'absolute';
-  canvas.style.left = myScreen.offsetLeft + 'px';
-  canvas.style.top = myScreen.offsetTop + 'px';
+
+  boundingCanvas.width = myScreen.offsetWidth;
+  boundingCanvas.height = myScreen.offsetHeight;
+
+  boundingCanvas.style.position = 'absolute';
+  boundingCanvas.style.left = myScreen.offsetLeft + 'px';
+  boundingCanvas.style.top = myScreen.offsetTop + 'px';
 
   let firstx;
   let secondx;
@@ -433,21 +520,21 @@ socket.on("imageData", (data) => {
     const boxes = obj.boxes;
     console.log(boxes);
 
-    ctx.strokeStyle = 'white'; // 상자의 테두리 색상
-    ctx.lineWidth = 2; // 상자 테두리 두께
-    ctx.fillStyle = 'white'; // 글자 색상
-    ctx.font = '16px Arial'; // 글자 폰트
+    context.strokeStyle = 'white'; // 상자의 테두리 색상
+    context.lineWidth = 2; // 상자 테두리 두께
+    context.fillStyle = 'white'; // 글자 색상
+    context.font = '16px Arial'; // 글자 폰트
     let flag = 0;
 
     boxes.forEach(box => {
-      const x = box[0] * canvas.width;
-      const y = box[1] * canvas.height;
+      const x = box[0] * boundingCanvas.width;
+      const y = box[1] * boundingCanvas.height;
 
       const text = obj.text;
       flag = flag + 1;
       // // 상자 그리기
       if (flag === 1) {
-        ctx.beginPath();
+        context.beginPath();
         firstx = x;
         firsty = y;
       }
@@ -457,28 +544,27 @@ socket.on("imageData", (data) => {
       else if (flag === 3) {
         secondy = y;
       }
-      ctx.lineTo(x, y);
+      context.lineTo(x, y);
       if (flag === 4) {
         console.log(secondx);
         console.log(firstx);
-        ctx.stroke();
-        ctx.closePath();
-        ctx.fill(); // 영역 색칠
-        ctx.fillStyle = 'black'; // 텍스트 색상을 검정색으로 변경
+        context.stroke();
+        context.closePath();
+        context.fill(); // 영역 색칠
+        context.fillStyle = 'black'; // 텍스트 색상을 검정색으로 변경
 
         const fontSize = Math.min(secondx - firstx, secondy - firsty) * 0.5;
         console.log(secondx - firstx); // 예시로 폰트 크기를 상자의 절반으로 설정
-        ctx.font = `${fontSize}px Arial`;
-        ctx.fillText(text, x, y - 5);
-        ctx.fillStyle = 'red'; // 텍스트 색상을 검정색으로 변경
+        context.font = `${fontSize}px Arial`;
+        context.fillText(text, x, y - 5);
+        context.fillStyle = 'red'; // 텍스트 색상을 검정색으로 변경
       }
 
     });
   });
-  
-  document.body.appendChild(canvas);
-  canvas.style.zIndex = "2000";
-  canvas.style.display = "flex";
+
+  boundingCanvas.style.zIndex = "10000";
+  boundingCanvas.style.display = "flex";
 })
 
 
@@ -506,7 +592,7 @@ socket.on("receive_media", async (offerDataString) => {
     myDataChannel = e.channel;
     myDataChannel.addEventListener("message", addMessage);
   });
-
+  console.log("hi333");
   //this is getting the offerdata from the media handling section. Since I got two datas, event and trackevent, my frontend should be able to parse these two data.
   const offerData = JSON.parse(offerDataString);
   const offer = offerData.offer;
@@ -576,6 +662,8 @@ function handleAddTrack(event) {
   //to differeniate these two kinds. So I made trackevent variables and used it as a flag.
   console.log("trackevent", trackevent);
   if (trackevent === 1) {
+    peerScreen.style.width = '70vw';
+    peerScreen.style.left = '15vw';
     peerStream = new MediaStream([event.track]);
     peerScreen.srcObject = peerStream;
     myVideo.style.display = "none";
@@ -587,10 +675,13 @@ function handleAddTrack(event) {
     peerVideo.srcObject = peerStream;
   }
   else if (trackevent === 3) {
+    peerScreen.style.width = '70vw';
+    peerScreen.style.left = '15vw';
     peerStream = new MediaStream([event.track]);
     peerScreen.srcObject = peerStream;
     myVideo.style.display = "flex";
     peerVideo.style.display = "flex";
+    context.clearRect(0, 0, boundingCanvas.width, boundingCanvas.height);
   }
 }
 
@@ -627,6 +718,7 @@ function makeConnection() {
   myPeerConnection.addEventListener("icecandidate", handleIce);
   //add track to stream my videos and screens
   myPeerConnection.addEventListener("track", handleAddTrack);
+
 }
 
 // --------------- wait room form (choose and enter a room) -----------------
@@ -656,33 +748,37 @@ async function handleRoomSubmit(e) {
   nickname = nicknameInput.value;
   showSharingRoom();
 }
-async function initCall() {
-  makeConnection();
-}
+
 
 async function handleRoom(e) {
   e.preventDefault();
-  await initCall();
+  await makeConnection();
   const roomNameInput = modal.querySelector("#roomName");
+  roomName = roomNameInput.value;
+  console.log(roomName);
   if (videoStream) {
+    console.log("hi");
     myPeerConnection.addTrack(videoStream.getVideoTracks()[0], videoStream);
-    const offer = myPeerConnection.createOffer();
-    myPeerConnection.setLocalDescription(offer);
+    const offer = await myPeerConnection.createOffer();
+
+    await myPeerConnection.setLocalDescription(offer);
+    console.log(offer);
+    console.log(trackevent);
+    console.log(roomName);
     const offerData = {
       offer,
       trackevent
     };
     const offerDataString = JSON.stringify(offerData); // when sending data to the backend, it needs to be in string
-    socket.emit("send_media", offerDataString, roomName)
+    await socket.emit("send_media", offerDataString, roomName);
   }
   if (roomNameInput.value === '') {
     // Input is empty, show an error message or handle accordingly
-    console.log('Please enter a room name');
+    alert('Please enter a room name');
   }
   else {
     socket.emit("set_nickname", nickname);
-    socket.emit("enter_room", roomNameInput.value, showRoom);
-    roomName = roomNameInput.value;
+    socket.emit("enter_room", roomName, showRoom);
   }
 }
 

@@ -31,7 +31,7 @@ const kafka = new Kafka({
 });
 
 const producer = kafka.producer();
-let jsonData;
+let jsonString;
 
 
 
@@ -92,7 +92,7 @@ wsServer.on("connection", (socket) => {
     }
   });
 
-  socket.on('sendImage', async (data, roomName) => {
+  socket.on('sendImage', async (data, roomName, targetNickname) => {
     // Produce the image data to Kafka topic
     await producer.connect();
     producer.send({
@@ -105,30 +105,30 @@ wsServer.on("connection", (socket) => {
     const consumer = kafka.consumer({ groupId: 'my-kafka-cluster' });
 
     await consumer.connect();
-    consumer.subscribe({ topic: 'korean', fromBeginning: false });
+    consumer.subscribe({ topic: 'english', fromBeginning: false });
 
-    consumer.run({
+    await consumer.run({
       eachMessage: async ({ topic, partition, message }) => {
 
 
         const buffer = message.value; // 위에서 제공한 value 값
 
         // 버퍼를 문자열로 변환
-        const jsonString = buffer.toString('utf-8'); // 'utf-8'은 문자 인코딩 방식입니다.
-
-        // JSON 문자열을 파싱하여 객체로 변환
+        jsonString = buffer.toString('utf-8'); // 'utf-8'은 문자 인코딩 방식입니다.
 
 
-        console.log("1: " , jsonString);
-        socket.emit("imageData", jsonString);
-        console.log("2:" , jsonString);
+
+        // processAndEmitData(roomName);
+
+
+
       }
     });
 
-    // Respond to the frontend
+    await socket.emit("imageData", jsonString);
 
   });
-
+ 
 
 });
 

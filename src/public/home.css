@@ -559,11 +559,10 @@ body{
 
 
 #boundingCanvas {
+  display : none;
   z-index: 1; /* canvas를 영상 위에 레이어로 배치 */
 }
 
-video::-webkit-media-controls-panel,
-video::-webkit-media-controls-play-button,
-video::-webkit-media-controls-start-playback-button {
-  display: none; /* 영상 컨트롤 숨김 */
+#myCanvas {
+  display : none;
 }
