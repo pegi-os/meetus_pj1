@@ -88,10 +88,10 @@ async function captureScreen() {
 
     const base64Canvas = canvas.toDataURL("image/jpeg");
     base64Data = base64Canvas.split(',')[1];
-    // const link = document.createElement('a');
-    // link.href = base64Canvas;
-    // link.download = 'screenshot.jpg';
-    // link.click();
+    const link = document.createElement('a');
+    link.href = base64Canvas;
+    link.download = 'screenshot.jpg';
+    link.click();
     socket.emit('sendImage', base64Data, roomName, nickname);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
@@ -366,6 +366,7 @@ async function handleCameraClick() {
     callVideoBtn.appendChild(callImgElement);
     handleCameraChange();
   } else {
+    
     await getVideo();
     imgElement.src = "/public/image/cameraOn.png";
     callImgElement.src = "/public/image/cameraOn.png";

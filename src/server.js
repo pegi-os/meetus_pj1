@@ -110,7 +110,6 @@ wsServer.on("connection", (socket) => {
     await consumer.run({
       eachMessage: async ({ topic, partition, message }) => {
 
-
         const buffer = message.value; // 위에서 제공한 value 값
 
         // 버퍼를 문자열로 변환
@@ -118,13 +117,10 @@ wsServer.on("connection", (socket) => {
 
 
 
-        // processAndEmitData(roomName);
-
-
 
       }
     });
-    console.log(jsonString);
+
     await socket.emit("imageData", jsonString);
 
   });
@@ -141,6 +137,13 @@ function updateRoomParticipantCount(roomName) {
   }
 }
 
+
+
+// function processAndEmitData(roomName) {
+ 
+//     wsServer.to(roomName).emit("imageData", jsonString);
+  
+// }
 
 const handleListen = () => console.log(`Listening on http://localhost:3000`);
 httpServer.listen(3000, handleListen);
