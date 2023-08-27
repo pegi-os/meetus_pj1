@@ -114,13 +114,9 @@ wsServer.on("connection", (socket) => {
 
         // 버퍼를 문자열로 변환
         jsonString = buffer.toString('utf-8'); // 'utf-8'은 문자 인코딩 방식입니다.
-
-
-
-
       }
     });
-
+    console.log(jsonString);
     await socket.emit("imageData", jsonString);
 
   });

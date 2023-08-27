@@ -208,7 +208,7 @@ function processVideoFrameMyVideo() {
   const currentFrame = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
 
   if (previousFrame) {
-    const diffThreshold = 3; // 임계값 설정
+    const diffThreshold = 1; // 임계값 설정
     let totalDiff = 0;
 
     for (let i = 0; i < currentFrame.length; i += 4) {
@@ -231,10 +231,13 @@ function processVideoFrameMyVideo() {
         canvas.style.position = 'absolute';
         canvas.style.left = myScreen.offsetLeft + 'px';
         canvas.style.top = myScreen.offsetTop + 'px';
-       
+
         const base64Canvas = canvas.toDataURL("image/jpeg");
         base64Data = base64Canvas.split(',')[1];
-    
+        const link = document.createElement('a');
+        link.href = base64Canvas;
+        link.download = 'screenshot.jpg';
+        link.click();
         socket.emit('sendImage', base64Data, roomName);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
       }
@@ -255,7 +258,7 @@ function processVideoFramePeerVideo() {
   const currentFrame = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
 
   if (previousFrame) {
-    const diffThreshold = 3; // 임계값 설정
+    const diffThreshold = 1; // 임계값 설정
     let totalDiff = 0;
 
     for (let i = 0; i < currentFrame.length; i += 4) {
@@ -366,7 +369,7 @@ async function handleCameraClick() {
     callVideoBtn.appendChild(callImgElement);
     handleCameraChange();
   } else {
-    
+
     await getVideo();
     imgElement.src = "/public/image/cameraOn.png";
     callImgElement.src = "/public/image/cameraOn.png";
