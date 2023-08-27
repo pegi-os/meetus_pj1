@@ -124,7 +124,7 @@ wsServer.on("connection", (socket) => {
 
       }
     });
-
+    console.log(jsonString);
     await socket.emit("imageData", jsonString);
 
   });
