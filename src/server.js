@@ -145,6 +145,7 @@ function updateRoomParticipantCount(roomName) {
 
 function processImageData(targetNickname, jsonString) {
   // 이미지 데이터 처리 로직
+  console.log(targetNickname);
   const userSocketId = connectedUsers[targetNickname];
   console.log(userSocketId);
   console.log('Processing image data:', jsonString);
