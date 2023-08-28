@@ -95,7 +95,7 @@ wsServer.on("connection", (socket) => {
   socket.on('sendImage', async (data, roomName, targetNickname) => {
     // Produce the image data to Kafka topic
     await producer.connect();
-    producer.send({
+    await producer.send({
       topic: 'topic',
       messages: [{ value: data }],
     });
@@ -105,7 +105,7 @@ wsServer.on("connection", (socket) => {
     const consumer = kafka.consumer({ groupId: 'my-kafka-cluster' });
 
     await consumer.connect();
-    consumer.subscribe({ topic: 'english', fromBeginning: false });
+    await consumer.subscribe({ topic: 'english', fromBeginning: false });
 
     await consumer.run({
       eachMessage: async ({ topic, partition, message }) => {
@@ -114,11 +114,12 @@ wsServer.on("connection", (socket) => {
 
         // 버퍼를 문자열로 변환
         jsonString = buffer.toString('utf-8'); // 'utf-8'은 문자 인코딩 방식입니다.
+        
       }
     });
     console.log(jsonString);
     await socket.emit("imageData", jsonString);
-
+    
   });
  
 
@@ -135,11 +136,11 @@ function updateRoomParticipantCount(roomName) {
 
 
 
-// function processAndEmitData(roomName) {
+function processAndEmitData(roomName) {
  
-//     wsServer.to(roomName).emit("imageData", jsonString);
+    wsServer.to(roomName).emit("imageData", jsonString);
   
-// }
+}
 
 const handleListen = () => console.log(`Listening on http://localhost:3000`);
 httpServer.listen(3000, handleListen);
