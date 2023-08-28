@@ -22,6 +22,7 @@ app.use((req, res, next) => {
 const httpServer = http.createServer(app);
 const wsServer = SocketIO(httpServer);
 const roomSockets = {};
+const connectedUsers = {};
 let currentRoom = null;
 
 
@@ -30,14 +31,15 @@ const kafka = new Kafka({
   brokers: ['52.91.126.82:9092', '34.232.53.143:9092', '100.24.240.6:9092']
 });
 
-const producer = kafka.producer();
-let jsonString;
+let jsonString = null;
 
 
-
-wsServer.on("connection", (socket) => {
+wsServer.on("connection", async (socket) => {
   socket["nickname"] = "Annymous";
-
+  
+  const producer = kafka.producer();
+  producer.connect();
+ 
   // socket.onAny((eventName, ...args) => {
   //   console.log(`Received event: ${eventName}`);
   //   console.log("Arguments:", args);
@@ -57,7 +59,9 @@ wsServer.on("connection", (socket) => {
   });
 
   socket.on("set_nickname", (nickname) => {
+    connectedUsers[nickname] = socket.id;
     socket["nickname"] = nickname;
+    console.log(connectedUsers);
   });
 
   socket.on("send_offer", (offer, roomName) => {
@@ -94,34 +98,36 @@ wsServer.on("connection", (socket) => {
 
   socket.on('sendImage', async (data, roomName, targetNickname) => {
     // Produce the image data to Kafka topic
-    await producer.connect();
-    await producer.send({
+
+    producer.send({
       topic: 'topic',
       messages: [{ value: data }],
     });
-
     console.log('Image data sent to Kafka.');
 
-    const consumer = kafka.consumer({ groupId: 'my-kafka-cluster' });
-
-    await consumer.connect();
-    await consumer.subscribe({ topic: 'english', fromBeginning: false });
-
     await consumer.run({
-      eachMessage: async ({ topic, partition, message }) => {
-
+      eachMessage: async  ({ topic, partition, message }) => {
+  
         const buffer = message.value; // 위에서 제공한 value 값
-
+  
         // 버퍼를 문자열로 변환
         jsonString = buffer.toString('utf-8'); // 'utf-8'은 문자 인코딩 방식입니다.
+        console.log(jsonString);
+        processImageData(targetNickname, jsonString);
         
       }
     });
-    console.log(jsonString);
-    await socket.emit("imageData", jsonString);
-    
   });
+
+  const consumer = kafka.consumer({ groupId: 'my-kafka-cluster' });
+  consumer.connect();
+
+  consumer.subscribe({ topic: 'english', fromBeginning: false });
+
  
+
+
+
 
 });
 
@@ -136,9 +142,16 @@ function updateRoomParticipantCount(roomName) {
 
 
 
-function processAndEmitData(roomName) {
- 
-    wsServer.to(roomName).emit("imageData", jsonString);
+
+function processImageData(targetNickname, jsonString) {
+  // 이미지 데이터 처리 로직
+  const userSocketId = connectedUsers[targetNickname];
+  console.log(userSocketId);
+  console.log('Processing image data:', jsonString);
+
+  // 소켓을 통해 데이터 전송
+  
+  wsServer.to(userSocketId).emit("imageData", jsonString);
   
 }
 

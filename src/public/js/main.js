@@ -208,7 +208,7 @@ function processVideoFrameMyVideo() {
   const currentFrame = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
 
   if (previousFrame) {
-    const diffThreshold = 1; // 임계값 설정
+    const diffThreshold = 5; // 임계값 설정
     let totalDiff = 0;
 
     for (let i = 0; i < currentFrame.length; i += 4) {
@@ -258,7 +258,7 @@ function processVideoFramePeerVideo() {
   const currentFrame = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
 
   if (previousFrame) {
-    const diffThreshold = 1; // 임계값 설정
+    const diffThreshold = 5; // 임계값 설정
     let totalDiff = 0;
 
     for (let i = 0; i < currentFrame.length; i += 4) {
@@ -500,6 +500,10 @@ socket.on("welcome", async () => {
   myPeerConnection.setLocalDescription(offer);
   socket.emit("send_offer", offer, roomName);
 });
+
+socket.on("image1", data => {
+  console.log(data);
+})
 
 
 socket.on("imageData", (data) => {
