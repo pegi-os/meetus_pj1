@@ -33,10 +33,13 @@ const callChatBtn = document.getElementById('callChat');
 const chatCloseBtn = document.getElementById('closeChat');
 const callPeople = document.getElementById('callPeople');
 const disconnectBtn = document.getElementById('disconnect');
-const aitranslateBtn = document.getElementById('callAitranslate');
+const aitranslateBtn = document.querySelector('callAitranslate');
 const boundingCanvas = document.getElementById('boundingCanvas');
 const context = boundingCanvas.getContext("2d");
-
+const menu = document.getElementById("dropup-content");
+const korean = document.getElementById("korean");
+const english = document.getElementById("english");
+const japanese = document.getElementById("japanese");
 
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext('2d');
@@ -61,41 +64,76 @@ let isDragging = false;
 let initialX = 0;
 let initialY = 0;
 let base64Data = null;
+let flagLanguage;
 
 // ------------------------function for when the user enterd the room----------------------------
 // Function to capture the current frame
-aitranslateBtn.addEventListener("click", captureScreen);
+// aitranslateBtn.addEventListener("click", captureScreen);
+// var dropupButton = document.querySelector("#callAitranslate");
+// var dropupContent = document.querySelector("#dropup-content");
+
+// dropupButton.addEventListener("click", function() {
+//     console.log("hi");
+//     dropupContent.classList.toggle("active");
+// });
+
+
+document.getElementById("callAitranslate").addEventListener("click", function() {
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
+});
+
+korean.addEventListener("click", () => {
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
+  korean.style.color = "#FF00CC"
+  flagLanguage = "korean";
+  captureScreen();
+});
+
+english.addEventListener("click", () => {
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
+  english.style.color = "#FF00CC"
+  flagLanguage = "english";
+  captureScreen();
+});
+
+
+japanese.addEventListener("click", () => {
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
+  japanese.style.color = "#FF00CC"
+  flagLanguage = "japan";
+  captureScreen();
+});
 
 
 async function captureScreen() {
+  console.log(nickname);
   if (screenStream) {
-
     intervalId = setInterval(() => {
       if (!myScreen.paused && !myScreen.ended) {
         processVideoFrameMyVideo();
       }
     }, 1000);
-
     const canvas = document.createElement('canvas');
     canvas.width = myScreen.offsetWidth;
     canvas.height = myScreen.offsetHeight;
     const ctx = canvas.getContext('2d');
     ctx.drawImage(myScreen, 0, 0, canvas.width, canvas.height);
     canvas.style.position = 'absolute';
+    canvas.style.zIndex = '10';
     canvas.style.left = myScreen.offsetLeft + 'px';
     canvas.style.top = myScreen.offsetTop + 'px';
 
 
     const base64Canvas = canvas.toDataURL("image/jpeg");
     base64Data = base64Canvas.split(',')[1];
-    const link = document.createElement('a');
-    link.href = base64Canvas;
-    link.download = 'screenshot.jpg';
-    link.click();
-    socket.emit('sendImage', base64Data, roomName, nickname);
+    // const link = document.createElement('a');
+    // link.href = base64Canvas;
+    // link.download = 'screenshot.jpg';
+    // link.click();
+    socket.emit('sendImage', base64Data, flagLanguage, nickname);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
-  else {
+  else if(peerVideo.style.display !== "none"){
     intervalId = setInterval(() => {
       if (!peerScreen.paused && !peerScreen.ended) {
         processVideoFramePeerVideo();
@@ -113,8 +151,12 @@ async function captureScreen() {
     const base64Canvas = canvas.toDataURL("image/jpeg");
     base64Data = base64Canvas.split(',')[1];
 
-    socket.emit('sendImage', base64Data, roomName, nickname);
+    socket.emit('sendImage', base64Data, flagLanguage, nickname);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+  else{
+    console.log("hi");
+    alert("화면 공유된 자료가 없습니다.");
   }
 }
 
@@ -205,6 +247,7 @@ async function getScreen() {
 function processVideoFrameMyVideo() {
 
   ctx.drawImage(myScreen, 0, 0, canvas.width, canvas.height);
+  canvas.style.zIndex = '10';
   const currentFrame = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
 
   if (previousFrame) {
@@ -221,7 +264,6 @@ function processVideoFrameMyVideo() {
     if (averageDiff > diffThreshold) {
       console.log(1);
       context.clearRect(0, 0, boundingCanvas.width, boundingCanvas.height);
-      // ctx.clearRect(0, 0, canvas.width, canvas.height);
       if (base64Data) {
         const canvas = document.createElement('canvas');
         canvas.width = myScreen.offsetWidth;
@@ -234,17 +276,15 @@ function processVideoFrameMyVideo() {
 
         const base64Canvas = canvas.toDataURL("image/jpeg");
         base64Data = base64Canvas.split(',')[1];
-        const link = document.createElement('a');
-        link.href = base64Canvas;
-        link.download = 'screenshot.jpg';
-        link.click();
-        socket.emit('sendImage', base64Data, roomName);
+        // const link = document.createElement('a');
+        // link.href = base64Canvas;
+        // link.download = 'screenshot.jpg';
+        // link.click();
+        socket.emit('sendImage', base64Data, flagLanguage, nickname);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        canvas.style.zIndex = "10";
       }
       previousFrame = currentFrame;
-    }
-    else {
-
     }
   }
 
@@ -253,7 +293,7 @@ function processVideoFrameMyVideo() {
 
 
 function processVideoFramePeerVideo() {
-
+ 
   ctx.drawImage(peerScreen, 0, 0, canvas.width, canvas.height);
   const currentFrame = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
 
@@ -284,7 +324,7 @@ function processVideoFramePeerVideo() {
 
         const base64Canvas = canvas.toDataURL("image/jpeg");
         base64Data = base64Canvas.split(',')[1];
-        socket.emit('sendImage', base64Data, roomName);
+        socket.emit('sendImage', base64Data, flagLanguage, nickname);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
       }
       previousFrame = currentFrame;
@@ -505,9 +545,13 @@ socket.on("image1", data => {
   console.log(data);
 })
 
+function decimalToHex(decimalNumber) {
+  return decimalNumber.toString(16).toUpperCase();
+}
+
 
 socket.on("imageData", (data) => {
-  console.log("ho");
+  
   const jsonData = JSON.parse(data);
 
   boundingCanvas.width = myScreen.offsetWidth;
@@ -528,10 +572,8 @@ socket.on("imageData", (data) => {
     const boxes = obj.boxes;
     console.log(boxes);
 
-    context.strokeStyle = 'white'; // 상자의 테두리 색상
+    
     context.lineWidth = 2; // 상자 테두리 두께
-    context.fillStyle = 'white'; // 글자 색상
-    context.font = '16px Arial'; // 글자 폰트
     let flag = 0;
 
     boxes.forEach(box => {
@@ -539,6 +581,14 @@ socket.on("imageData", (data) => {
       const y = box[1] * boundingCanvas.height;
 
       const text = obj.text;
+      const colorArray = obj.background_color;
+      var red = colorArray[0];
+      var green = colorArray[1];
+      var blue = colorArray[2];
+      var rgbColor = "rgb(" + red + ", " + green + ", " + blue + ")";
+      context.strokeStyle = rgbColor; // 상자의 테두리 색상
+      context.fillStyle = rgbColor; // 글자 색상
+      
       flag = flag + 1;
       // // 상자 그리기
       if (flag === 1) {
@@ -565,13 +615,14 @@ socket.on("imageData", (data) => {
         console.log(secondx - firstx); // 예시로 폰트 크기를 상자의 절반으로 설정
         context.font = `${fontSize}px Arial`;
         context.fillText(text, x, y - 5);
-        context.fillStyle = 'red'; // 텍스트 색상을 검정색으로 변경
+        
       }
 
     });
   });
 
-  boundingCanvas.style.zIndex = "10000";
+  document.getElementById('dropup-content').style.zIndex = '3';
+  boundingCanvas.style.zIndex = '2';
   boundingCanvas.style.display = "flex";
 })
 
@@ -754,6 +805,7 @@ async function handleRoomSubmit(e) {
   //setting nickname
   const nicknameInput = loginRoom.querySelector("#nickname");
   nickname = nicknameInput.value;
+  console.log(nickname);
   showSharingRoom();
 }
 
@@ -863,8 +915,9 @@ disconnectBtn.addEventListener('click', () => {
 
 
 callChatBtn.addEventListener("click", () => {
-  chatContainer.style.display = "block";
-  console.log(chatContainer.style.display);
+
+  chatContainer.style.display  = chatContainer.style.display  === "block" ? "none" : "block";
+  
 });
 
 chatCloseBtn.addEventListener("click", () => {

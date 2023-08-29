@@ -24,7 +24,8 @@ const wsServer = SocketIO(httpServer);
 const roomSockets = {};
 const connectedUsers = {};
 let currentRoom = null;
-
+let targetLanguage;
+let targetNickname;
 
 const kafka = new Kafka({
   clientId: 'my-app',
@@ -39,7 +40,28 @@ wsServer.on("connection", async (socket) => {
   
   const producer = kafka.producer();
   producer.connect();
- 
+  const consumer = kafka.consumer({ groupId: `${socket.id}` });
+  consumer.connect();
+  consumer.subscribe({ topics: ['korean', 'english', 'japan'] });
+
+  consumer.run({
+    eachMessage: async  ({ topic, partition, message }) => {
+      console.log("topic", topic);
+      console.log("target", targetNickname);
+      console.log("tttt", targetLanguage);
+      if(topic === targetLanguage){
+        
+        const buffer = message.value; // 위에서 제공한 value 값
+      // 버퍼를 문자열로 변환
+      jsonString = buffer.toString('utf-8'); // 'utf-8'은 문자 인코딩 방식입니다.
+      console.log(jsonString);
+      processImageData(targetNickname, jsonString);
+      }
+  
+      
+      
+    }
+});
   // socket.onAny((eventName, ...args) => {
   //   console.log(`Received event: ${eventName}`);
   //   console.log("Arguments:", args);
@@ -94,36 +116,22 @@ wsServer.on("connection", async (socket) => {
         updateRoomParticipantCount(currentRoom);
       }
     }
+    consumer.disconnect();
   });
 
-  socket.on('sendImage', async (data, roomName, targetNickname) => {
+  socket.on('sendImage', async (data, flagLanguage, flagNickname) => {
     // Produce the image data to Kafka topic
-
+    targetLanguage = flagLanguage;
+    targetNickname = flagNickname;
     producer.send({
       topic: 'topic',
       messages: [{ value: data }],
     });
     console.log('Image data sent to Kafka.');
-
-    await consumer.run({
-      eachMessage: async  ({ topic, partition, message }) => {
-  
-        const buffer = message.value; // 위에서 제공한 value 값
-  
-        // 버퍼를 문자열로 변환
-        jsonString = buffer.toString('utf-8'); // 'utf-8'은 문자 인코딩 방식입니다.
-        console.log(jsonString);
-        processImageData(targetNickname, jsonString);
-        
-      }
-    });
+   
   });
 
-  const consumer = kafka.consumer({ groupId: 'my-kafka-cluster' });
-  consumer.connect();
-
-  consumer.subscribe({ topic: 'english', fromBeginning: false });
-
+  
  
 
 
