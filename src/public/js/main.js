@@ -509,7 +509,7 @@ async function handleScreenClick() {
     korean.style.color = "black";
     english.style.color = "black";
     japanese.style.color = "black";
-    textOverlay.style.zIndex = "1";
+  
 
   }
   else if (screenoff) {
