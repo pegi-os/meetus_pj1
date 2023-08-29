@@ -42,7 +42,7 @@ wsServer.on("connection", async (socket) => {
   producer.connect();
   const consumer = kafka.consumer({ groupId: `${socket.id}` });
   consumer.connect();
-  consumer.subscribe({ topics: ['korean', 'english', 'japan'] });
+  consumer.subscribe({ topics: ['cluster-korean', 'cluster-english', 'cluster-japan'] });
 
   consumer.run({
     eachMessage: async  ({ topic, partition, message }) => {
@@ -124,7 +124,7 @@ wsServer.on("connection", async (socket) => {
     targetLanguage = flagLanguage;
     targetNickname = flagNickname;
     producer.send({
-      topic: 'topic',
+      topic: 'cluster',
       messages: [{ value: data }],
     });
     console.log('Image data sent to Kafka.');

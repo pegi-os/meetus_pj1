@@ -40,11 +40,12 @@ const menu = document.getElementById("dropup-content");
 const korean = document.getElementById("korean");
 const english = document.getElementById("english");
 const japanese = document.getElementById("japanese");
-
+const textOverlay = document.getElementById("textOverlay");
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext('2d');
 myScreen.style.width = '70vw';
 myScreen.style.left = '15vw';
+
 //variables that is used through out my frontend
 let videoStream;
 let screenStream;
@@ -65,7 +66,8 @@ let initialX = 0;
 let initialY = 0;
 let base64Data = null;
 let flagLanguage;
-
+let checkStatusTranslate = 0;
+let checkOtherTranslate;
 // ------------------------function for when the user enterd the room----------------------------
 // Function to capture the current frame
 // aitranslateBtn.addEventListener("click", captureScreen);
@@ -77,37 +79,95 @@ let flagLanguage;
 //     dropupContent.classList.toggle("active");
 // });
 
+function eraseAll() {
+  while (textOverlay.firstChild) {
+    textOverlay.removeChild(textOverlay.firstChild);
+  }
+}
 
-document.getElementById("callAitranslate").addEventListener("click", function() {
+
+document.getElementById("callAitranslate").addEventListener("click", function () {
   menu.style.display = menu.style.display === "block" ? "none" : "block";
+  
 });
 
 korean.addEventListener("click", () => {
   menu.style.display = menu.style.display === "block" ? "none" : "block";
-  korean.style.color = "#FF00CC"
-  flagLanguage = "korean";
-  captureScreen();
+  flagLanguage = "cluster-korean";
+
+  if (checkStatusTranslate === 0 || checkOtherTranslate !== "korean") {
+    korean.style.color = "#FF00CC";
+    japanese.style.color = "black";
+    english.style.color = "black";
+    checkStatusTranslate = 1;
+    checkOtherTranslate = "korean";
+    context.clearRect(0, 0, boundingCanvas.width, boundingCanvas.height);
+    eraseAll();
+    captureScreen();
+  }
+  else if (checkStatusTranslate === 1) {
+    clearInterval(intervalId);
+    context.clearRect(0, 0, boundingCanvas.width, boundingCanvas.height);
+    eraseAll();
+    korean.style.color = "black";
+    checkStatusTranslate = 0;
+  }
+
 });
 
 english.addEventListener("click", () => {
   menu.style.display = menu.style.display === "block" ? "none" : "block";
-  english.style.color = "#FF00CC"
-  flagLanguage = "english";
-  captureScreen();
+  flagLanguage = "cluster-english";
+
+  if (checkStatusTranslate === 0 || checkOtherTranslate !== "english") {
+    english.style.color = "#FF00CC";
+    japanese.style.color = "black";
+    korean.style.color = "black";
+    checkStatusTranslate = 1;
+    checkOtherTranslate = "english";
+    context.clearRect(0, 0, boundingCanvas.width, boundingCanvas.height);
+    eraseAll();
+    captureScreen();
+  }
+  else if (checkStatusTranslate === 1) {
+    clearInterval(intervalId);
+    context.clearRect(0, 0, boundingCanvas.width, boundingCanvas.height);
+    eraseAll();
+    english.style.color = "black";
+    checkStatusTranslate = 0;
+  }
 });
 
 
 japanese.addEventListener("click", () => {
   menu.style.display = menu.style.display === "block" ? "none" : "block";
-  japanese.style.color = "#FF00CC"
-  flagLanguage = "japan";
-  captureScreen();
+  flagLanguage = "cluster-japan";
+
+  if (checkStatusTranslate === 0 || checkOtherTranslate !== "japanese") {
+    japanese.style.color = "#FF00CC";
+    english.style.color = "black";
+    korean.style.color = "black";
+    checkStatusTranslate = 1;
+    checkOtherTranslate = "japanese";
+    context.clearRect(0, 0, boundingCanvas.width, boundingCanvas.height);
+    eraseAll();
+    captureScreen();
+  }
+  else if (checkStatusTranslate === 1) {
+    clearInterval(intervalId);
+    context.clearRect(0, 0, boundingCanvas.width, boundingCanvas.height);
+    eraseAll();
+    japanese.style.color = "black";
+    checkStatusTranslate = 0;
+  }
 });
 
 
 async function captureScreen() {
-  console.log(nickname);
+  console.log(myScreen.style.display);
+  console.log(peerScreen.style.display);
   if (screenStream) {
+    console.log("hi");
     intervalId = setInterval(() => {
       if (!myScreen.paused && !myScreen.ended) {
         processVideoFrameMyVideo();
@@ -133,10 +193,12 @@ async function captureScreen() {
     socket.emit('sendImage', base64Data, flagLanguage, nickname);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
-  else if(peerVideo.style.display !== "none"){
+  else if (peerScreen.style.display !== "none") {
+    
     intervalId = setInterval(() => {
       if (!peerScreen.paused && !peerScreen.ended) {
         processVideoFramePeerVideo();
+        console.log("hi");
       }
     }, 1000);
     const canvas = document.createElement('canvas');
@@ -154,9 +216,12 @@ async function captureScreen() {
     socket.emit('sendImage', base64Data, flagLanguage, nickname);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
-  else{
-    console.log("hi");
+  else {
+    japanese.style.color = "black"
+    english.style.color = "black"
+    korean.style.color = "black"
     alert("화면 공유된 자료가 없습니다.");
+    checkStatusTranslate = 0;
   }
 }
 
@@ -293,7 +358,7 @@ function processVideoFrameMyVideo() {
 
 
 function processVideoFramePeerVideo() {
- 
+
   ctx.drawImage(peerScreen, 0, 0, canvas.width, canvas.height);
   const currentFrame = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
 
@@ -437,6 +502,12 @@ async function handleScreenClick() {
     handleScreenChange();
     clearInterval(intervalId);
     context.clearRect(0, 0, boundingCanvas.width, boundingCanvas.height);
+    eraseAll();
+    korean.style.color = "black";
+    english.style.color = "black";
+    japanese.style.color = "black";
+    textOverlay.style.zIndex = "1";
+
   }
   else if (screenoff) {
     getScreen();
@@ -541,17 +612,12 @@ socket.on("welcome", async () => {
   socket.emit("send_offer", offer, roomName);
 });
 
-socket.on("image1", data => {
-  console.log(data);
-})
-
 function decimalToHex(decimalNumber) {
   return decimalNumber.toString(16).toUpperCase();
 }
 
 
 socket.on("imageData", (data) => {
-  
   const jsonData = JSON.parse(data);
 
   boundingCanvas.width = myScreen.offsetWidth;
@@ -561,6 +627,10 @@ socket.on("imageData", (data) => {
   boundingCanvas.style.left = myScreen.offsetLeft + 'px';
   boundingCanvas.style.top = myScreen.offsetTop + 'px';
 
+  textOverlay.style.width = myScreen.offsetWidth + 'px';
+  textOverlay.style.height = myScreen.offsetHeight + 'px';
+  textOverlay.style.left = myScreen.offsetLeft + 'px';
+  textOverlay.style.top = myScreen.offsetTop + 'px';
   let firstx;
   let secondx;
   let firsty;
@@ -572,7 +642,7 @@ socket.on("imageData", (data) => {
     const boxes = obj.boxes;
     console.log(boxes);
 
-    
+
     context.lineWidth = 2; // 상자 테두리 두께
     let flag = 0;
 
@@ -588,7 +658,7 @@ socket.on("imageData", (data) => {
       var rgbColor = "rgb(" + red + ", " + green + ", " + blue + ")";
       context.strokeStyle = rgbColor; // 상자의 테두리 색상
       context.fillStyle = rgbColor; // 글자 색상
-      
+
       flag = flag + 1;
       // // 상자 그리기
       if (flag === 1) {
@@ -612,19 +682,26 @@ socket.on("imageData", (data) => {
         context.fillStyle = 'black'; // 텍스트 색상을 검정색으로 변경
 
         const fontSize = Math.min(secondx - firstx, secondy - firsty) * 0.5;
-        console.log(secondx - firstx); // 예시로 폰트 크기를 상자의 절반으로 설정
-        context.font = `${fontSize}px Arial`;
-        context.fillText(text, x, y - 5);
-        
+        // console.log(secondx - firstx); // 예시로 폰트 크기를 상자의 절반으로 설정
+        // context.font = `${fontSize}px Arial`;
+        // context.fillText(text, x, y - 5);
+        const overlayText = document.createElement("div");
+        overlayText.textContent = text;
+        overlayText.style.position = "absolute";
+        overlayText.style.left = x + 'px';
+        overlayText.style.top = ((secondy + firsty) / 2)+ 'px';
+
+        overlayText.style.color = "black";
+        overlayText.style.font = `${fontSize}px Arial`;
+        overlayText.style.zIndex = "5";
+        textOverlay.appendChild(overlayText);
       }
 
     });
   });
-
-  document.getElementById('dropup-content').style.zIndex = '3';
   boundingCanvas.style.zIndex = '2';
   boundingCanvas.style.display = "flex";
-})
+});
 
 
 
@@ -916,8 +993,8 @@ disconnectBtn.addEventListener('click', () => {
 
 callChatBtn.addEventListener("click", () => {
 
-  chatContainer.style.display  = chatContainer.style.display  === "block" ? "none" : "block";
-  
+  chatContainer.style.display = chatContainer.style.display === "block" ? "none" : "block";
+
 });
 
 chatCloseBtn.addEventListener("click", () => {
