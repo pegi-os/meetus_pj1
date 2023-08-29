@@ -88,7 +88,7 @@ function eraseAll() {
 
 document.getElementById("callAitranslate").addEventListener("click", function () {
   menu.style.display = menu.style.display === "block" ? "none" : "block";
-  
+
 });
 
 korean.addEventListener("click", () => {
@@ -194,7 +194,7 @@ async function captureScreen() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
   else if (peerScreen.style.display !== "none") {
-    
+
     intervalId = setInterval(() => {
       if (!peerScreen.paused && !peerScreen.ended) {
         processVideoFramePeerVideo();
@@ -347,7 +347,8 @@ function processVideoFrameMyVideo() {
         // link.click();
         socket.emit('sendImage', base64Data, flagLanguage, nickname);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        canvas.style.zIndex = "10";
+        context.clearRect(0, 0, boundingCanvas.width, boundingCanvas.height);
+        eraseAll();
       }
       previousFrame = currentFrame;
     }
@@ -391,6 +392,8 @@ function processVideoFramePeerVideo() {
         base64Data = base64Canvas.split(',')[1];
         socket.emit('sendImage', base64Data, flagLanguage, nickname);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        context.clearRect(0, 0, boundingCanvas.width, boundingCanvas.height);
+        eraseAll();
       }
       previousFrame = currentFrame;
     }
@@ -689,7 +692,7 @@ socket.on("imageData", (data) => {
         overlayText.textContent = text;
         overlayText.style.position = "absolute";
         overlayText.style.left = x + 'px';
-        overlayText.style.top = ((secondy + firsty) / 2)+ 'px';
+        overlayText.style.top = ((secondy + firsty) / 2) + 'px';
 
         overlayText.style.color = "black";
         overlayText.style.font = `${fontSize}px Arial`;
@@ -818,6 +821,7 @@ function handleAddTrack(event) {
     myVideo.style.display = "flex";
     peerVideo.style.display = "flex";
     context.clearRect(0, 0, boundingCanvas.width, boundingCanvas.height);
+    eraseAll();
   }
 }
 
@@ -938,13 +942,13 @@ function addMessage(e) {
 function addMyMessage(e) {
   const li = document.createElement("li");
   li.innerHTML = e.data;
-  li.style.background = "#D3C9B5";
+  
   messages.append(li);
 }
 
 function handleChatSubmit(e) {
   e.preventDefault();
-  const input = chatForm.querySelector("input");
+  const input = chatForm.querySelector("textarea");
   if (myDataChannel != null) {
     myDataChannel.send(`${nickname}: ${input.value}`);
   }
@@ -1024,4 +1028,10 @@ document.addEventListener("mouseup", () => {
   isDragging = false;
 });
 
+const listItems = document.querySelectorAll('#messages > li');
+listItems.forEach(item => {
+  item.style.height = 'auto'; // Reset the height to auto initially
+  const itemHeight = item.clientHeight;
+  item.style.height = itemHeight + 'px';
+});
 

@@ -57,9 +57,6 @@ wsServer.on("connection", async (socket) => {
       console.log(jsonString);
       processImageData(targetNickname, jsonString);
       }
-  
-      
-      
     }
 });
   // socket.onAny((eventName, ...args) => {

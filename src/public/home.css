@@ -13,26 +13,32 @@ h1 {
   color: #4665d1;
 }
 
-body{
+body {
   overflow: hidden;
 }
 
 
 #waitRoom-container {
-  position: relative; /* 부모 요소를 상대적 위치로 설정 */
-  width: 100vw; /* 화면 너비의 100% */
-  height: 100vh; /* 화면 높이의 100% */
+  position: relative;
+  /* 부모 요소를 상대적 위치로 설정 */
+  width: 100vw;
+  /* 화면 너비의 100% */
+  height: 100vh;
+  /* 화면 높이의 100% */
   margin: auto;
 }
-#waitRoom{
+
+#waitRoom {
   display: none;
 }
 
 #myVideo {
   position: absolute;
   left: 5%;
-  width: 95vw; /* 화면 너비의 100% */
-  height: 100vh; /* 화면 높이의 100% */
+  width: 95vw;
+  /* 화면 너비의 100% */
+  height: 100vh;
+  /* 화면 높이의 100% */
   background-color: #5d5d5d;
 }
 
@@ -48,7 +54,7 @@ body{
   border-radius: 100px;
   width: 6vw;
   height: 6vh;
-  font-size: 2vw;  
+  font-size: 2vw;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -68,14 +74,14 @@ body{
   border-radius: 100px;
   width: 6vw;
   height: 6vh;
-  font-size: 2vw;   
+  font-size: 2vw;
   display: flex;
   justify-content: center;
   align-items: center;
   line-height: 0;
 }
 
-#join-button{
+#join-button {
   position: absolute;
   top: 90%;
   left: 50%;
@@ -91,7 +97,7 @@ body{
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 1vw;  
+  font-size: 1vw;
 }
 
 #settings {
@@ -107,31 +113,43 @@ body{
   margin-top: 3vh;
   border: none;
   border-radius: 50%;
-  width: 3vw; /* 버튼의 너비를 조정 */
-  height: 6vh; /* 버튼의 높이를 조정 */
+  width: 3vw;
+  /* 버튼의 너비를 조정 */
+  height: 6vh;
+  /* 버튼의 높이를 조정 */
   background-color: #323232;
   color: #fff;
-  font-size: 1.5vw; /* 글자 크기를 조정 */
+  font-size: 1.5vw;
+  /* 글자 크기를 조정 */
   cursor: pointer;
-  display: flex; /* 텍스트를 가운데로 정렬하기 위해 Flexbox 사용 */
-  justify-content: center; /* 수평으로 가운데 정렬 */
-  align-items: center; /* 수직으로 가운데 정렬 */
+  display: flex;
+  /* 텍스트를 가운데로 정렬하기 위해 Flexbox 사용 */
+  justify-content: center;
+  /* 수평으로 가운데 정렬 */
+  align-items: center;
+  /* 수직으로 가운데 정렬 */
 }
 
 #person {
   margin-left: 0.7vw;
-    margin-top: 3vh;
+  margin-top: 3vh;
   border: none;
   border-radius: 50%;
-  width: 3vw; /* 버튼의 너비를 조정 */
-  height: 6vh; /* 버튼의 높이를 조정 */
+  width: 3vw;
+  /* 버튼의 너비를 조정 */
+  height: 6vh;
+  /* 버튼의 높이를 조정 */
   background-color: #323232;
   color: #fff;
-  font-size: 1.5vw; /* 글자 크기를 조정 */
+  font-size: 1.5vw;
+  /* 글자 크기를 조정 */
   cursor: pointer;
-  display: flex; /* 텍스트를 가운데로 정렬하기 위해 Flexbox 사용 */
-  justify-content: center; /* 수평으로 가운데 정렬 */
-  align-items: center; /* 수직으로 가운데 정렬 */
+  display: flex;
+  /* 텍스트를 가운데로 정렬하기 위해 Flexbox 사용 */
+  justify-content: center;
+  /* 수평으로 가운데 정렬 */
+  align-items: center;
+  /* 수직으로 가운데 정렬 */
 }
 
 #clock {
@@ -139,15 +157,21 @@ body{
   margin-top: 3vh;
   border: none;
   border-radius: 50%;
-  width: 3vw; /* 버튼의 너비를 조정 */
-  height: 6vh; /* 버튼의 높이를 조정 */
+  width: 3vw;
+  /* 버튼의 너비를 조정 */
+  height: 6vh;
+  /* 버튼의 높이를 조정 */
   background-color: #323232;
   color: #fff;
-  font-size: 1.5vw; /* 글자 크기를 조정 */
+  font-size: 1.5vw;
+  /* 글자 크기를 조정 */
   cursor: pointer;
-  display: flex; /* 텍스트를 가운데로 정렬하기 위해 Flexbox 사용 */
-  justify-content: center; /* 수평으로 가운데 정렬 */
-  align-items: center; /* 수직으로 가운데 정렬 */
+  display: flex;
+  /* 텍스트를 가운데로 정렬하기 위해 Flexbox 사용 */
+  justify-content: center;
+  /* 수평으로 가운데 정렬 */
+  align-items: center;
+  /* 수직으로 가운데 정렬 */
 }
 
 #setting {
@@ -155,53 +179,64 @@ body{
   margin-top: 3vh;
   border: none;
   border-radius: 50%;
-  width: 3vw; /* 버튼의 너비를 조정 */
-  height: 6vh; /* 버튼의 높이를 조정 */
+  width: 3vw;
+  /* 버튼의 너비를 조정 */
+  height: 6vh;
+  /* 버튼의 높이를 조정 */
   background-color: #323232;
   color: #fff;
-  font-size: 1.5vw; /* 글자 크기를 조정 */
+  font-size: 1.5vw;
+  /* 글자 크기를 조정 */
   cursor: pointer;
-  display: flex; /* 텍스트를 가운데로 정렬하기 위해 Flexbox 사용 */
-  justify-content: center; /* 수평으로 가운데 정렬 */
-  align-items: center; /* 수직으로 가운데 정렬 */
+  display: flex;
+  /* 텍스트를 가운데로 정렬하기 위해 Flexbox 사용 */
+  justify-content: center;
+  /* 수평으로 가운데 정렬 */
+  align-items: center;
+  /* 수직으로 가운데 정렬 */
 }
 
-#userScreen{
-  width: 100vw; /* 화면 너비의 100% */
-  height: 100vh; /* 화면 높이의 100% */
+#userScreen {
+  width: 100vw;
+  /* 화면 너비의 100% */
+  height: 100vh;
+  /* 화면 높이의 100% */
 }
-  .modal {
-    display: none;
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 100%; /* Set the width to 50% of the viewport width */
-    height: 100%; /* Set the height to 50% of the viewport height */
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.4);
-  }
 
-  .modal-content {
-    position: absolute;
-    background-color: #fefefe;
-    padding: 30px;
-    border: 1px solid #888;
-    width: 600px;
-    text-align: center;
-    border-radius: 10px;
-    
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
+.modal {
+  display: none;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  /* Set the width to 50% of the viewport width */
+  height: 100%;
+  /* Set the height to 50% of the viewport height */
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+}
 
-.modal-content > p {
+.modal-content {
+  position: absolute;
+  background-color: #fefefe;
+  padding: 30px;
+  border: 1px solid #888;
+  width: 600px;
+  text-align: center;
+  border-radius: 10px;
+
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.modal-content>p {
   font-size: 50px;
 }
 
 
-.modal-content > input {
-  border-radius: 10px ;
+.modal-content>input {
+  border-radius: 10px;
   margin-left: 30px;
   width: 500px;
   height: 50px;
@@ -231,7 +266,7 @@ body{
 
 
 
-#peerVideo{
+#peerVideo {
   position: absolute;
   top: 10vh;
   left: 55vw;
@@ -290,16 +325,17 @@ body{
   height: 100vh;
   width: 100vw;
 }
+
 #videoCall {
   display: flex;
 }
 
 #screenStream {
- position: relative;
- padding-top: 500px;
- width: 10px;
- height: 10px;
- z-index: 1;
+  position: relative;
+  padding-top: 500px;
+  width: 10px;
+  height: 10px;
+  z-index: 1;
 }
 
 
@@ -309,9 +345,9 @@ body{
   z-index: 1;
 }
 
-#myScreen{
+#myScreen {
   pointer-events: none;
-  
+
   height: 970px;
 }
 
@@ -323,8 +359,8 @@ body{
   bottom: 10%;
   right: 1%;
   border-radius: 10px;
-  background-color: white;
-  border: 1px solid #ccc;
+  background-color: #BFDAFF;
+  border: none;
   padding: 10px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
   z-index: 15;
@@ -341,36 +377,71 @@ body{
 
 #messages>li {
   list-style: none;
+  position: relative;
   padding: 20px 10px;
-  width: 350px;
-  background: #969691;
+  width: 20vw;
+  background: white;
   margin: 10px;
   border-radius: 10px;
-  color: white;
+  color: black;
+  word-break: break-all; /* 긴 단어를 강제로 줄 바꿈 */
 }
 
 #chat {
-  width: 25vw;
-  height: 5vh;
+  right: 1vw;
+  height: 10vh;
   display: flex;
   background-color: white;
-}
-
-#chat > input {
-  background-color: #D9D9D9;
-  border-color: #D9D9D9;
-  width: 70%; /* Adjust the width as needed */
-  border-radius: 5px;
-  top: 300px;
+  position: absolute;
   border: none;
+  border-top: 1px solid black;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
 
-#chat > button {
-  background-color: black;
+#chat>textarea {
+  background-color: white;
+  border-color: white;
+  line-height: 1.5;
+  /* Adjust the width as needed */
+  height: 13vh;
+  border-radius: 5px;
+  position: absolute;
+  border: none;
+  bottom: 0;
+  resize: none;
+  font-family: Arial, sans-serif; /* Change font to Arial */
+  font-size: 18px; /* Change font size to 16px */
+  left: 0;
+  right: 0;
+  outline: none; /* Remove default focus outline */
+}
+
+
+
+#chat>button {
+  background-color: white;
   color: white;
   border: none;
   border-radius: 20px;
-  margin-left: 10px; /* Adding some spacing between input and button */
+  padding-left: 30px;
+  position: absolute;
+  left: 22vw;
+  top: 8vh;
+  line-height: 0.1;
+}
+
+#closeChat {
+  background-color: transparent;
+  border: none;
+  padding: 1vw 1vw 1vw 1vw;
+  margin-left: 23vw;
+  bottom: 3vh;
+  font-size: 20px;
+  color: #434343;
+  position: relative;
+  opacity: 0.6;
 }
 
 #header {
@@ -397,7 +468,7 @@ body{
 
 
 #callVideo {
-  top:0.8vh;
+  top: 0.8vh;
   left: 53vw;
   background-color: black;
   color: white;
@@ -418,7 +489,7 @@ body{
 
 #callAudio {
   left: 43vw;
-  top:0.8vh;
+  top: 0.8vh;
   position: absolute;
   background-color: black;
   color: white;
@@ -472,8 +543,8 @@ body{
   border-radius: 100px;
   width: 6vw;
   height: 6vh;
-  font-size: 2vw;   
- 
+  font-size: 2vw;
+
   justify-content: top;
   align-items: center;
   line-height: 0.1vh;
@@ -481,7 +552,7 @@ body{
   z-index: 10;
 }
 
-#callChat{
+#callChat {
   left: 94vw;
   top: 0.6vh;
   padding: 0px;
@@ -493,7 +564,7 @@ body{
   border-radius: 100px;
   width: 6vw;
   height: 6vh;
-  font-size: 2vw;   
+  font-size: 2vw;
   justify-content: center;
   align-items: center;
   line-height: 1.1;
@@ -502,7 +573,7 @@ body{
 }
 
 #callPeople {
-  left:5vw;
+  left: 5vw;
   top: 0.1vh;
   position: absolute;
   background-color: #323232;
@@ -512,11 +583,12 @@ body{
   border-radius: 100px;
   width: 6vw;
   height: 6vh;
-  font-size: 1vw;   
+  font-size: 1vw;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0 10px; /* 좌우 여백을 20px로 설정 */
+  padding: 0 10px;
+  /* 좌우 여백을 20px로 설정 */
   line-height: 1;
   pointer-events: all;
   z-index: 10;
@@ -533,7 +605,7 @@ body{
   border-radius: 100px;
   width: 6vw;
   height: 6vh;
-  font-size: 1.5vw;   
+  font-size: 1.5vw;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -546,8 +618,10 @@ body{
   position: absolute;
   left: 100px;
   top: 120px;
-  width: 90vw; /* 화면 너비의 100% */
-  height: 75vh; /* 화면 높이의 100% */
+  width: 90vw;
+  /* 화면 너비의 100% */
+  height: 75vh;
+  /* 화면 높이의 100% */
   border-radius: 10px;
 }
 
@@ -555,36 +629,39 @@ body{
   position: absolute;
   left: 100px;
   top: 120px;
-  width: 90vw; /* 화면 너비의 100% */
-  height: 75vh; /* 화면 높이의 100% */
+  width: 90vw;
+  /* 화면 너비의 100% */
+  height: 75vh;
+  /* 화면 높이의 100% */
   border-radius: 10px;
 }
 
 
 #boundingCanvas {
-  display : none;
-  z-index: 10; /* canvas를 영상 위에 레이어로 배치 */
+  display: none;
+  z-index: 10;
+  /* canvas를 영상 위에 레이어로 배치 */
 }
 
 #myCanvas {
-  display : none;
+  display: none;
   z-index: 10;
 }
 
-#translateLanguage{
+#translateLanguage {
   display: none;
 }
 
 
 #dropup {
   z-index: 103;
-} 
+}
 
 #dropup-content {
   display: none;
   position: absolute;
-  background-color: #BBD0E9 ;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  background-color: #BBD0E9;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 103;
   left: 10vw;
   bottom: 11vh;
@@ -604,7 +681,7 @@ body{
   text-align: left;
   border-radius: 0px;
   z-index: 103;
-  
+
 }
 
 
@@ -612,3 +689,4 @@ body{
   background-color: #BBD0E9;
   z-index: 103;
 }
+
