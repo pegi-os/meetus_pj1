@@ -95,23 +95,23 @@ korean.addEventListener("click", () => {
   menu.style.display = menu.style.display === "block" ? "none" : "block";
   flagLanguage = "cluster-korean";
 
-  // if (checkStatusTranslate === 0 || checkOtherTranslate !== "korean") {
-  //   korean.style.color = "#FF00CC";
-  //   japanese.style.color = "black";
-  //   english.style.color = "black";
-  //   checkStatusTranslate = 1;
-  //   checkOtherTranslate = "korean";
-  //   context.clearRect(0, 0, boundingCanvas.width, boundingCanvas.height);
-  //   // eraseAll();
-  //   captureScreen();
-  // }
-  // else if (checkStatusTranslate === 1) {
-  //   clearInterval(intervalId);
-  //   context.clearRect(0, 0, boundingCanvas.width, boundingCanvas.height);
-  //   // eraseAll();
-  //   korean.style.color = "black";
-  //   checkStatusTranslate = 0;
-  // }
+  if (checkStatusTranslate === 0 || checkOtherTranslate !== "korean") {
+    korean.style.color = "#FF00CC";
+    japanese.style.color = "black";
+    english.style.color = "black";
+    checkStatusTranslate = 1;
+    checkOtherTranslate = "korean";
+    context.clearRect(0, 0, boundingCanvas.width, boundingCanvas.height);
+    // eraseAll();
+    captureScreen();
+  }
+  else if (checkStatusTranslate === 1) {
+    clearInterval(intervalId);
+    context.clearRect(0, 0, boundingCanvas.width, boundingCanvas.height);
+    // eraseAll();
+    korean.style.color = "black";
+    checkStatusTranslate = 0;
+  }
 
 });
 
@@ -283,7 +283,7 @@ async function getScreen() {
 
     screenoff = !screenoff;
     myVideo.style.display = "none";
-    // peerVideo.style.display = "none";
+    peerVideo.style.display = "none";
 
     myScreen.style.width = '70vw';
     myScreen.style.left = '15vw';
@@ -688,7 +688,7 @@ socket.on("imageData", (data) => {
         context.fill(); // 영역 색칠
         context.fillStyle = rgbColor; // 텍스트 색상을 검정색으로 변경
 
-        const fontSize = Math.min(secondx - firstx, secondy - firsty) * 0.7;
+        const fontSize = Math.min(secondx - firstx, secondy - firsty) * 0.5;
         console.log(secondx - firstx); // 예시로 폰트 크기를 상자의 절반으로 설정
         context.font = `${fontSize}px Arial`;
         context.fillText(text, x, y - 5);
@@ -771,19 +771,19 @@ socket.on("participant_count", (participantCount) => {
   callPeople.appendChild(numberElement);
   participant = participantCount;
   if (participantCount === 1) {
-    myVideo.style.width = "20vw";  // Set the desired width
-    myVideo.style.height = "20vh";
-    myVideo.style.top = "35vh"; // 화면 높이의 10% 위치에 위치
-    myVideo.style.left = "75vw"; // 화면 너비의 20% 위치에 위치
+    myVideo.style.width = "90vw";  // Set the desired width
+    myVideo.style.height = "75vh";
+    myVideo.style.top = "10vh"; // 화면 높이의 10% 위치에 위치
+    myVideo.style.left = "5vw"; // 화면 너비의 20% 위치에 위치
     myVideo.style.borderRadius = "10px";
     peerVideo.style.display = "none";
 
   }
   else if (participantCount === 2) {
-    myVideo.style.width = "20vw";  // Set the desired width
-    myVideo.style.height = "20vh";
-    myVideo.style.top = "35vh"; // 화면 높이의 10% 위치에 위치
-    myVideo.style.left = "75vw"; // 화면 너비의 20% 위치에 위치
+    myVideo.style.width = "40vw";  // Set the desired width
+    myVideo.style.height = "75vh";
+    myVideo.style.top = "10vh";
+    myVideo.style.left = "5vw";    // Set the desired top position
     myVideo.style.borderRadius = "10px";
     peerVideo.style.display = "flex";
   }
@@ -810,7 +810,7 @@ function handleAddTrack(event) {
     peerStream = new MediaStream([event.track]);
     peerScreen.srcObject = peerStream;
     myVideo.style.display = "none";
-    // peerVideo.style.display = "none";
+    peerVideo.style.display = "none";
   }
   else if (trackevent === 2) {
     console.log("wihy");
