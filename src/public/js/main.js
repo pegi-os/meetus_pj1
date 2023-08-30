@@ -688,7 +688,7 @@ socket.on("imageData", (data) => {
         context.fill(); // 영역 색칠
         context.fillStyle = rgbColor; // 텍스트 색상을 검정색으로 변경
 
-        // const fontSize = Math.min(secondx - firstx, secondy - firsty) * 0.5;
+        const fontSize = Math.min(secondx - firstx, secondy - firsty) * 0.5;
         // console.log(secondx - firstx); // 예시로 폰트 크기를 상자의 절반으로 설정
         // context.font = `${fontSize}px Arial`;
         // context.fillText(text, x, y - 5);
