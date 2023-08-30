@@ -662,6 +662,7 @@ socket.on("imageData", (data) => {
       context.strokeStyle = rgbColor; // 상자의 테두리 색상
       context.fillStyle = rgbColor; // 글자 색상
 
+     
       flag = flag + 1;
       // // 상자 그리기
       if (flag === 1) {
@@ -677,27 +678,30 @@ socket.on("imageData", (data) => {
       }
       context.lineTo(x, y);
       if (flag === 4) {
-        console.log(secondx);
-        console.log(firstx);
+        const colorText = obj.text_color;
+        var red = colorText[0];
+        var green = colorText[1];
+        var blue = colorText[2];
+        var rgbColor = "rgb(" + red + ", " + green + ", " + blue + ")";
         context.stroke();
         context.closePath();
         context.fill(); // 영역 색칠
-        context.fillStyle = 'black'; // 텍스트 색상을 검정색으로 변경
+        context.fillStyle = rgbColor; // 텍스트 색상을 검정색으로 변경
 
         const fontSize = Math.min(secondx - firstx, secondy - firsty) * 0.5;
-        // console.log(secondx - firstx); // 예시로 폰트 크기를 상자의 절반으로 설정
-        // context.font = `${fontSize}px Arial`;
-        // context.fillText(text, x, y - 5);
-        const overlayText = document.createElement("div");
-        overlayText.textContent = text;
-        overlayText.style.position = "absolute";
-        overlayText.style.left = x + 'px';
-        overlayText.style.top = ((secondy + firsty) / 2) + 'px';
+        console.log(secondx - firstx); // 예시로 폰트 크기를 상자의 절반으로 설정
+        context.font = `${fontSize}px Arial`;
+        context.fillText(text, x, y - 5);
+        // const overlayText = document.createElement("div");
+        // overlayText.textContent = text;
+        // overlayText.style.position = "absolute";
+        // overlayText.style.left = x + 'px';
+        // overlayText.style.top = ((secondy + firsty) / 2) + 'px';
 
-        overlayText.style.color = "black";
-        overlayText.style.font = `${fontSize}px Arial`;
-        overlayText.style.zIndex = "5";
-        textOverlay.appendChild(overlayText);
+        // overlayText.style.color = "black";
+        // overlayText.style.font = `${fontSize}px Arial`;
+        // overlayText.style.zIndex = "5";
+        // textOverlay.appendChild(overlayText);
       }
 
     });
