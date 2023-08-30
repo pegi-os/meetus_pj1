@@ -780,10 +780,10 @@ socket.on("participant_count", (participantCount) => {
 
   }
   else if (participantCount === 2) {
-    myVideo.style.width = "40vw";  // Set the desired width
-    myVideo.style.height = "75vh";
-    myVideo.style.top = "10vh";
-    myVideo.style.left = "5vw";    // Set the desired top position
+    myVideo.style.width = "20vw";  // Set the desired width
+    myVideo.style.height = "20vh";
+    myVideo.style.top = "35vh"; // 화면 높이의 10% 위치에 위치
+    myVideo.style.left = "75vw"; // 화면 너비의 20% 위치에 위치
     myVideo.style.borderRadius = "10px";
     peerVideo.style.display = "flex";
   }
