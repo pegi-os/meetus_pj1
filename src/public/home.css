@@ -268,12 +268,13 @@ body {
 
 #peerVideo {
   position: absolute;
-  top: 10vh;
-  left: 55vw;
-  height: 75vh;
-  width: 40vw;
+  top: 35vh;
+  left: 75vw;
+  height: 20vh;
+  width: 20vw;
   background-color: #5d5d5d;
   border-radius: 10px;
+  z-index: 100;
 }
 
 #loginRoom {

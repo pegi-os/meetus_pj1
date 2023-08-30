@@ -282,8 +282,8 @@ async function getScreen() {
     canvas.style.top = myScreen.offsetTop + 'px';
 
     screenoff = !screenoff;
-    // myVideo.style.display = "none";
-    peerVideo.style.display = "none";
+    myVideo.style.display = "none";
+    // peerVideo.style.display = "none";
 
     myScreen.style.width = '70vw';
     myScreen.style.left = '15vw';
@@ -810,7 +810,7 @@ function handleAddTrack(event) {
     peerStream = new MediaStream([event.track]);
     peerScreen.srcObject = peerStream;
     myVideo.style.display = "none";
-    peerVideo.style.display = "none";
+    // peerVideo.style.display = "none";
   }
   else if (trackevent === 2) {
     console.log("wihy");
