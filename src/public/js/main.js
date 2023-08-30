@@ -102,13 +102,13 @@ korean.addEventListener("click", () => {
     checkStatusTranslate = 1;
     checkOtherTranslate = "korean";
     context.clearRect(0, 0, boundingCanvas.width, boundingCanvas.height);
-    eraseAll();
+    // eraseAll();
     captureScreen();
   }
   else if (checkStatusTranslate === 1) {
     clearInterval(intervalId);
     context.clearRect(0, 0, boundingCanvas.width, boundingCanvas.height);
-    eraseAll();
+    // eraseAll();
     korean.style.color = "black";
     checkStatusTranslate = 0;
   }
@@ -126,13 +126,13 @@ english.addEventListener("click", () => {
     checkStatusTranslate = 1;
     checkOtherTranslate = "english";
     context.clearRect(0, 0, boundingCanvas.width, boundingCanvas.height);
-    eraseAll();
+    // eraseAll();
     captureScreen();
   }
   else if (checkStatusTranslate === 1) {
     clearInterval(intervalId);
     context.clearRect(0, 0, boundingCanvas.width, boundingCanvas.height);
-    eraseAll();
+    // eraseAll();
     english.style.color = "black";
     checkStatusTranslate = 0;
   }
@@ -150,13 +150,13 @@ japanese.addEventListener("click", () => {
     checkStatusTranslate = 1;
     checkOtherTranslate = "japanese";
     context.clearRect(0, 0, boundingCanvas.width, boundingCanvas.height);
-    eraseAll();
+    // eraseAll();
     captureScreen();
   }
   else if (checkStatusTranslate === 1) {
     clearInterval(intervalId);
     context.clearRect(0, 0, boundingCanvas.width, boundingCanvas.height);
-    eraseAll();
+    // eraseAll();
     japanese.style.color = "black";
     checkStatusTranslate = 0;
   }
@@ -348,7 +348,7 @@ function processVideoFrameMyVideo() {
         socket.emit('sendImage', base64Data, flagLanguage, nickname);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         context.clearRect(0, 0, boundingCanvas.width, boundingCanvas.height);
-        eraseAll();
+        // eraseAll();
       }
       previousFrame = currentFrame;
     }
@@ -393,7 +393,7 @@ function processVideoFramePeerVideo() {
         socket.emit('sendImage', base64Data, flagLanguage, nickname);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         context.clearRect(0, 0, boundingCanvas.width, boundingCanvas.height);
-        eraseAll();
+        // eraseAll();
       }
       previousFrame = currentFrame;
     }
@@ -505,7 +505,7 @@ async function handleScreenClick() {
     handleScreenChange();
     clearInterval(intervalId);
     context.clearRect(0, 0, boundingCanvas.width, boundingCanvas.height);
-    eraseAll();
+    // eraseAll();
     korean.style.color = "black";
     english.style.color = "black";
     japanese.style.color = "black";
@@ -825,7 +825,7 @@ function handleAddTrack(event) {
     myVideo.style.display = "flex";
     peerVideo.style.display = "flex";
     context.clearRect(0, 0, boundingCanvas.width, boundingCanvas.height);
-    eraseAll();
+    // eraseAll();
   }
 }
 
