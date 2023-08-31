@@ -33,7 +33,7 @@ const callChatBtn = document.getElementById('callChat');
 const chatCloseBtn = document.getElementById('closeChat');
 const callPeople = document.getElementById('callPeople');
 const disconnectBtn = document.getElementById('disconnect');
-const aitranslateBtn = document.querySelector('callAitranslate');
+const aitranslateBtn = document.getElementById('callAitranslate');
 const boundingCanvas = document.getElementById('boundingCanvas');
 const context = boundingCanvas.getContext("2d");
 const menu = document.getElementById("dropup-content");
@@ -60,6 +60,7 @@ let trackevent = 2;
 let peerStream;
 let previousFrame = null;
 let intervalId;
+let intervalChangeScreen;
 let participant;
 let isDragging = false;
 let initialX = 0;
@@ -68,6 +69,8 @@ let base64Data = null;
 let flagLanguage;
 let checkStatusTranslate = 0;
 let checkOtherTranslate;
+let LoadingState = 0;
+
 // ------------------------function for when the user enterd the room----------------------------
 // Function to capture the current frame
 // aitranslateBtn.addEventListener("click", captureScreen);
@@ -83,6 +86,39 @@ function eraseAll() {
   while (textOverlay.firstChild) {
     textOverlay.removeChild(textOverlay.firstChild);
   }
+}
+
+function LoadingScreen() {
+  let state = 1;
+  const textSpan = document.createElement("span");
+  textSpan.style.fontSize = "15px";
+  textSpan.style.display = "block";
+  textSpan.style.marginTop = "0.7vh";
+  textSpan.textContent = "bleu eye";
+  const openEye = document.createElement("img");
+  openEye.width = "40";
+  openEye.height = "40";
+  openEye.style.marginTop = "-1vh";
+  const closedEye = document.createElement("img");
+  closedEye.width = "40";
+  closedEye.height = "40";
+  closedEye.style.marginTop = "-1vh";
+  closedEye.src = "/public/image/firstStateEye.png";
+  openEye.src = "/public/image/bleueye.png";
+  intervalChangeScreen = setInterval(() => {
+    if (state === 1) {
+      aitranslateBtn.innerText = "";
+      aitranslateBtn.appendChild(closedEye);
+      aitranslateBtn.appendChild(textSpan);
+      state = 2;
+    }
+    else if (state === 2) {
+      aitranslateBtn.innerText = "";
+      aitranslateBtn.appendChild(openEye);
+      aitranslateBtn.appendChild(textSpan);
+      state = 1;
+    }
+  }, 500);
 }
 
 
@@ -103,6 +139,7 @@ korean.addEventListener("click", () => {
     checkOtherTranslate = "korean";
     context.clearRect(0, 0, boundingCanvas.width, boundingCanvas.height);
     // eraseAll();
+    LoadingScreen();
     captureScreen();
   }
   else if (checkStatusTranslate === 1) {
@@ -127,6 +164,7 @@ english.addEventListener("click", () => {
     checkOtherTranslate = "english";
     context.clearRect(0, 0, boundingCanvas.width, boundingCanvas.height);
     // eraseAll();
+    LoadingScreen();
     captureScreen();
   }
   else if (checkStatusTranslate === 1) {
@@ -151,6 +189,7 @@ japanese.addEventListener("click", () => {
     checkOtherTranslate = "japanese";
     context.clearRect(0, 0, boundingCanvas.width, boundingCanvas.height);
     // eraseAll();
+    LoadingScreen();
     captureScreen();
   }
   else if (checkStatusTranslate === 1) {
@@ -327,7 +366,7 @@ function processVideoFrameMyVideo() {
     const averageDiff = totalDiff / (currentFrame.length / 4);
 
     if (averageDiff > diffThreshold) {
-      console.log(1);
+      LoadingScreen();
       context.clearRect(0, 0, boundingCanvas.width, boundingCanvas.height);
       if (base64Data) {
         const canvas = document.createElement('canvas');
@@ -375,7 +414,7 @@ function processVideoFramePeerVideo() {
     const averageDiff = totalDiff / (currentFrame.length / 4);
 
     if (averageDiff > diffThreshold) {
-      console.log(1);
+      LoadingScreen();
       context.clearRect(0, 0, boundingCanvas.width, boundingCanvas.height);
       // ctx.clearRect(0, 0, canvas.width, canvas.height);
       if (base64Data) {
@@ -510,7 +549,7 @@ async function handleScreenClick() {
     korean.style.color = "black";
     english.style.color = "black";
     japanese.style.color = "black";
-  
+
 
   }
   else if (screenoff) {
@@ -663,7 +702,7 @@ socket.on("imageData", (data) => {
       context.strokeStyle = rgbColor; // 상자의 테두리 색상
       context.fillStyle = rgbColor; // 글자 색상
 
-     
+
       flag = flag + 1;
       // // 상자 그리기
       if (flag === 1) {
@@ -707,6 +746,21 @@ socket.on("imageData", (data) => {
 
     });
   });
+  clearInterval(intervalChangeScreen);
+  const textSpan = document.createElement("span");
+  textSpan.style.fontSize = "15px";
+  textSpan.style.display = "block";
+  textSpan.style.marginTop = "0.7vh";
+  textSpan.textContent = "bleu eye";
+  const openEye = document.createElement("img");
+  openEye.width = "40";
+  openEye.height = "40";
+  openEye.style.marginTop = "-1vh";
+  openEye.src = "/public/image/bleueye.png";
+  aitranslateBtn.innerText = "";
+  aitranslateBtn.appendChild(openEye);
+  aitranslateBtn.appendChild(textSpan);
+
   boundingCanvas.style.zIndex = '2';
   boundingCanvas.style.display = "flex";
 });
@@ -947,7 +1001,7 @@ function addMessage(e) {
 function addMyMessage(e) {
   const li = document.createElement("li");
   li.innerHTML = e.data;
-  
+
   messages.append(li);
 }
 
