@@ -26,6 +26,7 @@ const connectedUsers = {};
 let currentRoom = null;
 let targetLanguage;
 let targetNickname;
+let realName;
 
 const kafka = new Kafka({
   clientId: 'my-app',
@@ -78,6 +79,7 @@ wsServer.on("connection", async (socket) => {
   });
 
   socket.on("set_nickname", (nickname) => {
+    realName = nickname;
     connectedUsers[nickname] = socket.id;
     socket["nickname"] = nickname;
     console.log(connectedUsers);
@@ -113,6 +115,8 @@ wsServer.on("connection", async (socket) => {
         updateRoomParticipantCount(currentRoom);
       }
     }
+    delete connectedUsers[realName];
+    console.log(connectedUsers);
     consumer.disconnect();
   });
 
