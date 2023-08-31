@@ -105,22 +105,31 @@ function LoadingScreen() {
   closedEye.style.marginTop = "-1vh";
   closedEye.src = "/public/image/firstStateEye.png";
   openEye.src = "/public/image/bleueye.png";
-  intervalChangeScreen = setInterval(() => {
-    if (state === 1) {
-      aitranslateBtn.innerText = "";
-      aitranslateBtn.appendChild(closedEye);
-      aitranslateBtn.appendChild(textSpan);
-      state = 2;
-    }
-    else if (state === 2) {
-      aitranslateBtn.innerText = "";
-      aitranslateBtn.appendChild(openEye);
-      aitranslateBtn.appendChild(textSpan);
-      state = 1;
-    }
-  }, 500);
+  if(!intervalChangeScreen){
+    intervalChangeScreen = setInterval(() => {
+      if (state === 1) {
+        aitranslateBtn.innerText = "";
+        aitranslateBtn.appendChild(closedEye);
+        aitranslateBtn.appendChild(textSpan);
+        state = 2;
+      }
+      else if (state === 2) {
+        aitranslateBtn.innerText = "";
+        aitranslateBtn.appendChild(openEye);
+        aitranslateBtn.appendChild(textSpan);
+        state = 1;
+      }
+    }, 500);
+  }
+ 
 }
 
+function stopAllIntervals() {
+  intervalId = clearInterval(intervalId);
+  intervalChangeScreen = clearInterval(intervalChangeScreen);
+  console.log(intervalId);
+  console.log(intervalChangeScreen);
+}
 
 document.getElementById("callAitranslate").addEventListener("click", function () {
   menu.style.display = menu.style.display === "block" ? "none" : "block";
@@ -143,7 +152,7 @@ korean.addEventListener("click", () => {
     captureScreen();
   }
   else if (checkStatusTranslate === 1) {
-    clearInterval(intervalId);
+    stopAllIntervals();
     context.clearRect(0, 0, boundingCanvas.width, boundingCanvas.height);
     // eraseAll();
     korean.style.color = "black";
@@ -168,7 +177,7 @@ english.addEventListener("click", () => {
     captureScreen();
   }
   else if (checkStatusTranslate === 1) {
-    clearInterval(intervalId);
+    stopAllIntervals();
     context.clearRect(0, 0, boundingCanvas.width, boundingCanvas.height);
     // eraseAll();
     english.style.color = "black";
@@ -193,7 +202,7 @@ japanese.addEventListener("click", () => {
     captureScreen();
   }
   else if (checkStatusTranslate === 1) {
-    clearInterval(intervalId);
+    stopAllIntervals();
     context.clearRect(0, 0, boundingCanvas.width, boundingCanvas.height);
     // eraseAll();
     japanese.style.color = "black";
@@ -206,12 +215,16 @@ async function captureScreen() {
   console.log(myScreen.style.display);
   console.log(peerScreen.style.display);
   if (screenStream) {
-    console.log("hi");
-    intervalId = setInterval(() => {
-      if (!myScreen.paused && !myScreen.ended) {
-        processVideoFrameMyVideo();
-      }
-    }, 1000);
+    
+    if(!intervalId){
+      intervalId = setInterval(() => {
+        console.log("hi");
+        if (!myScreen.paused && !myScreen.ended) {
+          processVideoFrameMyVideo();
+        }
+      }, 1000);
+    }
+    
     const canvas = document.createElement('canvas');
     canvas.width = myScreen.offsetWidth;
     canvas.height = myScreen.offsetHeight;
@@ -542,7 +555,7 @@ async function handleScreenClick() {
     }
     screenoff = !screenoff;
     handleScreenChange();
-    clearInterval(intervalId);
+    stopAllIntervals();
     context.clearRect(0, 0, boundingCanvas.width, boundingCanvas.height);
     // eraseAll();
     checkStatusTranslate = 0;
@@ -747,6 +760,7 @@ socket.on("imageData", (data) => {
     });
   });
   clearInterval(intervalChangeScreen);
+  intervalChangeScreen = undefined;
   const textSpan = document.createElement("span");
   textSpan.style.fontSize = "15px";
   textSpan.style.display = "block";
