@@ -102,13 +102,13 @@ korean.addEventListener("click", () => {
     checkStatusTranslate = 1;
     checkOtherTranslate = "korean";
     context.clearRect(0, 0, boundingCanvas.width, boundingCanvas.height);
-    eraseAll();
+    // eraseAll();
     captureScreen();
   }
   else if (checkStatusTranslate === 1) {
     clearInterval(intervalId);
     context.clearRect(0, 0, boundingCanvas.width, boundingCanvas.height);
-    eraseAll();
+    // eraseAll();
     korean.style.color = "black";
     checkStatusTranslate = 0;
   }
@@ -126,13 +126,13 @@ english.addEventListener("click", () => {
     checkStatusTranslate = 1;
     checkOtherTranslate = "english";
     context.clearRect(0, 0, boundingCanvas.width, boundingCanvas.height);
-    eraseAll();
+    // eraseAll();
     captureScreen();
   }
   else if (checkStatusTranslate === 1) {
     clearInterval(intervalId);
     context.clearRect(0, 0, boundingCanvas.width, boundingCanvas.height);
-    eraseAll();
+    // eraseAll();
     english.style.color = "black";
     checkStatusTranslate = 0;
   }
@@ -150,13 +150,13 @@ japanese.addEventListener("click", () => {
     checkStatusTranslate = 1;
     checkOtherTranslate = "japanese";
     context.clearRect(0, 0, boundingCanvas.width, boundingCanvas.height);
-    eraseAll();
+    // eraseAll();
     captureScreen();
   }
   else if (checkStatusTranslate === 1) {
     clearInterval(intervalId);
     context.clearRect(0, 0, boundingCanvas.width, boundingCanvas.height);
-    eraseAll();
+    // eraseAll();
     japanese.style.color = "black";
     checkStatusTranslate = 0;
   }
@@ -348,7 +348,7 @@ function processVideoFrameMyVideo() {
         socket.emit('sendImage', base64Data, flagLanguage, nickname);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         context.clearRect(0, 0, boundingCanvas.width, boundingCanvas.height);
-        eraseAll();
+        // eraseAll();
       }
       previousFrame = currentFrame;
     }
@@ -393,7 +393,7 @@ function processVideoFramePeerVideo() {
         socket.emit('sendImage', base64Data, flagLanguage, nickname);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         context.clearRect(0, 0, boundingCanvas.width, boundingCanvas.height);
-        eraseAll();
+        // eraseAll();
       }
       previousFrame = currentFrame;
     }
@@ -505,7 +505,8 @@ async function handleScreenClick() {
     handleScreenChange();
     clearInterval(intervalId);
     context.clearRect(0, 0, boundingCanvas.width, boundingCanvas.height);
-    eraseAll();
+    // eraseAll();
+    checkStatusTranslate = 0;
     korean.style.color = "black";
     english.style.color = "black";
     japanese.style.color = "black";
@@ -688,20 +689,20 @@ socket.on("imageData", (data) => {
         context.fill(); // 영역 색칠
         context.fillStyle = rgbColor; // 텍스트 색상을 검정색으로 변경
 
-        const fontSize = Math.min(secondx - firstx, secondy - firsty) * 0.5;
-        // console.log(secondx - firstx); // 예시로 폰트 크기를 상자의 절반으로 설정
-        // context.font = `${fontSize}px Arial`;
-        // context.fillText(text, x, y - 5);
-        const overlayText = document.createElement("div");
-        overlayText.textContent = text;
-        overlayText.style.position = "absolute";
-        overlayText.style.left = x + 'px';
-        overlayText.style.top = ((secondy + firsty) / 2) + 'px';
+        const fontSize = Math.min(secondx - firstx, secondy - firsty) * 0.7;
+        console.log(secondx - firstx); // 예시로 폰트 크기를 상자의 절반으로 설정
+        context.font = `${fontSize}px Arial`;
+        context.fillText(text, x, y - 10);
+        // const overlayText = document.createElement("div");
+        // overlayText.textContent = text;
+        // overlayText.style.position = "absolute";
+        // overlayText.style.left = x + 'px';
+        // overlayText.style.top = ((secondy + firsty) / 2) + 'px';
 
-        overlayText.style.color = "black";
-        overlayText.style.font = `${fontSize}px Arial`;
-        overlayText.style.zIndex = "5";
-        textOverlay.appendChild(overlayText);
+        // overlayText.style.color = "black";
+        // overlayText.style.font = `${fontSize}px Arial`;
+        // overlayText.style.zIndex = "5";
+        // textOverlay.appendChild(overlayText);
       }
 
     });
