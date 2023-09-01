@@ -1060,11 +1060,11 @@ modal.addEventListener('click', function (event) {
 });
 
 homeButton.addEventListener('click', () => {
-  window.location.href = 'http://localhost:3000/'; // Replace with your actual home page URL
+  window.location.href = 'https://meetus-x6k9.onrender.com/'; // Replace with your actual home page URL
 });
 
 disconnectBtn.addEventListener('click', () => {
-  window.location.href = 'http://localhost:3000/'; // Replace with your actual home page URL
+  window.location.href = 'https://meetus-x6k9.onrender.com/'; // Replace with your actual home page URL
 });
 
 
